@@ -1,4 +1,6 @@
 import 'dart:io';
+import 'package:comprobador_flutter/exportar_excel.dart';
+
 import 'common.dart';
 
 import 'package:comprobador_flutter/common.dart';
@@ -79,7 +81,7 @@ class Datos extends ChangeNotifier {
 
   Future<void> seleccionarArchivo(int numWidget) async {
     FilePickerResult? result = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx']);
+        .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx', 'pdf']);
     if (result != null) {
       numWidget == 1
           ? _path1 = File(result.files.single.path!)
@@ -131,5 +133,10 @@ class Datos extends ChangeNotifier {
         notifyListeners();
       }
     }
+  }
+
+  void exportar() {
+    // ExportarExcel.exceltest();
+    ExportarExcel.crearExcel(_listaEntradas1, nombreModelo1, nombreModelo2);
   }
 }

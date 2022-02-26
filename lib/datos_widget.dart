@@ -29,51 +29,59 @@ class DatosWidget extends StatelessWidget {
     }
 
     return Column(children: [
+      SingleChildScrollView(
+        child: Container(
+            width: display.width * 0.3,
+            height: display.height * 0.6,
+            decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
+            child: datos.getListEntradas(numWidget).isEmpty
+                ? const Center(child: Text('Elige modelo de datos y archivo'))
+                : ListView.builder(
+                  clipBehavior: Clip.antiAlias,
+                    shrinkWrap: true,
+                    itemCount: datos.getListEntradas(numWidget).length,
+                    itemBuilder: (BuildContext context, int index) {
+                      return ListTile(
+                        tileColor: getColor(
+                            datos.getListEntradas(numWidget)[index].encontrado),
+                        title: Text(datos
+                            .getListEntradas(numWidget)[index]
+                            .identificador),
+                        trailing: Text(datos
+                            .getListEntradas(numWidget)[index]
+                            .cantidad
+                            .toString()),
+                        subtitle:
+                            Text(datos.getListEntradas(numWidget)[index].fecha),
+                      );
+                    })),
+      ),
+      
       Container(
-          width: display.width*0.3,
-          height: display.height*0.6,
-          decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
-          child: datos.getListEntradas(numWidget).isEmpty
-              ? const Center(child: Text('Elige modelo de datos y archivo'))
-              : ListView.builder(
-                shrinkWrap: true,
-                  itemCount: datos.getListEntradas(numWidget).length,
-                  itemBuilder: (BuildContext context, int index) {
-                    return ListTile(
-                      tileColor: getColor(
-                          datos.getListEntradas(numWidget)[index].encontrado),
-                      title: Text(datos
-                          .getListEntradas(numWidget)[index]
-                          .identificador),
-                      trailing: Text(datos
-                          .getListEntradas(numWidget)[index]
-                          .cantidad
-                          .toString()),
-                      subtitle:
-                          Text(datos.getListEntradas(numWidget)[index].fecha),
-                    );
-                  })),
-      SizedBox(height: display.height*0.05,),
-      Row(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        children: [
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: PopupMenuButton<ModeloDatos>(
-                child: Text(
-                    numWidget == 1 ? datos.nombreModelo1 : datos.nombreModelo2),
-                onSelected: (value) => datos.setModelo(numWidget, value),
-                itemBuilder: (BuildContext context) => listaModelos
-                    .map((modelo) => PopupMenuItem<ModeloDatos>(
-                          value: modelo,
-                          child: Text(modelo.nombre),
-                        ))
-                    .toList()),
-          ),
-          ElevatedButton(
-              onPressed: () => datos.seleccionarArchivo(numWidget),
-              child: const Text('Seleccionar Archivo'))
-        ],
+        color: Colors.white,
+        height: display.height*0.25,
+        width: display.width*0.3,
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Padding(
+              padding: const EdgeInsets.all(8.0),
+              child: PopupMenuButton<ModeloDatos>(
+                  child: Text(
+                      numWidget == 1 ? datos.nombreModelo1 : datos.nombreModelo2),
+                  onSelected: (value) => datos.setModelo(numWidget, value),
+                  itemBuilder: (BuildContext context) => listaModelos
+                      .map((modelo) => PopupMenuItem<ModeloDatos>(
+                            value: modelo,
+                            child: Text(modelo.nombre),
+                          ))
+                      .toList()),
+            ),
+            ElevatedButton(
+                onPressed: () => datos.seleccionarArchivo(numWidget),
+                child: const Text('Seleccionar Archivo'))
+          ],
+        ),
       )
     ]);
   }

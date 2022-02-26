@@ -25,7 +25,14 @@ class HomeScreen extends StatelessWidget {
               numWidget: 2,
             ),
             Column(
-              children: [ElevatedButton(onPressed: datos.cruzarDatos, child: const Text('Cruzar datos'))],
+              children: [
+                ElevatedButton(
+                    onPressed: datos.cruzarDatos,
+                    child: const Text('Cruzar datos')),
+                ElevatedButton(
+                    onPressed: datos.exportar,
+                    child: const Text('Exportar excel'))
+              ],
             )
           ],
         ),
