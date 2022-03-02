@@ -7,3 +7,4 @@ import 'dart:math';
 
 
 enum Encontrado{noEncontrado, correcto, incorrecto}
+enum TipoDatos{pdf, xlsx}

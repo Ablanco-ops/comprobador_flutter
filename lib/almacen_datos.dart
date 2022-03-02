@@ -10,6 +10,14 @@ List<ModeloDatos> listaModelos = [
       comprobante: {'A18': 'UMI', 'B18': 'Código Producto'},
       fecha: 'T'),
   ModeloDatos(
+      nombre: 'Chep Pdf',
+      primeraFila: 0,
+      idColumna: '',
+      cantidadColumna: '',
+      sheet: '',
+      fecha: '',
+      comprobante: {}),
+  ModeloDatos(
       nombre: 'Chep Palets',
       primeraFila: 7,
       idColumna: 'F',
@@ -46,7 +54,7 @@ List<ModeloDatos> listaModelos = [
       primeraFila: 6,
       idColumna: 'E',
       cantidadColumna: 'F',
-      sheet: 'Hoja1',
+      sheet: 'Clientes',
       fecha: 'D',
       comprobante: {'B1': 'IVA CLIENTES'}),
   ModeloDatos(
@@ -54,7 +62,7 @@ List<ModeloDatos> listaModelos = [
       primeraFila: 6,
       idColumna: 'E',
       cantidadColumna: 'F',
-      sheet: 'Hoja1',
+      sheet: 'Proveedores',
       fecha: 'D',
       comprobante: {'B1': 'IVA PROVEEDORES'})
 ];
