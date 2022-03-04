@@ -35,9 +35,10 @@ class DatosWidget extends StatelessWidget {
             height: display.height * 0.6,
             decoration: BoxDecoration(borderRadius: BorderRadius.circular(10)),
             child: datos.getListEntradas(numWidget).isEmpty
-                ? const Center(child: Text('Elige modelo de datos y archivo'))
+                ? const Center(
+                    child: Text('Elige tipo de archivo y localización'))
                 : ListView.builder(
-                  clipBehavior: Clip.antiAlias,
+                    clipBehavior: Clip.antiAlias,
                     shrinkWrap: true,
                     itemCount: datos.getListEntradas(numWidget).length,
                     itemBuilder: (BuildContext context, int index) {
@@ -56,26 +57,31 @@ class DatosWidget extends StatelessWidget {
                       );
                     })),
       ),
-      
       Container(
         color: Colors.white,
-        height: display.height*0.25,
-        width: display.width*0.3,
+        height: display.height * 0.25,
+        width: display.width * 0.3,
         child: Column(
           children: [
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Padding(
+                Container(
                   padding: const EdgeInsets.all(8.0),
+                  decoration: BoxDecoration(
+                    borderRadius: BorderRadius.circular(10),
+                    color: Theme.of(context).primaryColor,
+                  ),
                   child: PopupMenuButton<ArchivoDatos>(
-                      child: Text(
-                          numWidget == 1 ? datos.nombreArchivo1 : datos.nombreArchivo2),
+                      color: Theme.of(context).primaryColor,
+                      child: Text(numWidget == 1
+                          ? datos.nombreArchivo1
+                          : datos.nombreArchivo2, style: const TextStyle(color: Colors.white),),
                       onSelected: (value) => datos.setArchivo(numWidget, value),
                       itemBuilder: (BuildContext context) => listaArchivosDatos
                           .map((archivo) => PopupMenuItem<ArchivoDatos>(
                                 value: archivo,
-                                child: Text(archivo.nombre),
+                                child: Text(archivo.nombre,style: const TextStyle(color: Colors.white)),
                               ))
                           .toList()),
                 ),

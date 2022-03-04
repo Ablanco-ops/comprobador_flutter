@@ -1,5 +1,6 @@
 
 
+import 'package:comprobador_flutter/configuracion_modelos.dart';
 import 'package:comprobador_flutter/datos_provider.dart';
 import 'package:comprobador_flutter/home_screen.dart';
 import 'package:flutter/material.dart';
@@ -23,11 +24,15 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     return MaterialApp(
       title: 'Comprobador datos excel',
+      debugShowCheckedModeBanner: false,
       theme: ThemeData(
        
         primarySwatch: Colors.green,
       ),
       home: const HomeScreen(),
+      routes: {
+        ConfiguracionModelos.routeName: (ctx)=>  const ConfiguracionModelos(),
+      },
     );
   }
 }

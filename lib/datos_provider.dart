@@ -21,8 +21,8 @@ class Datos extends ChangeNotifier {
   late ArchivoDatos _archivo1;
   late ArchivoDatos _archivo2;
 
-  String nombreArchivo1 = 'Modelo';
-  String nombreArchivo2 = 'Modelo';
+  String nombreArchivo1 = 'Tipo de archivo';
+  String nombreArchivo2 = 'Tipo de archivo';
 
   void obtenerDatos(int numWidget) {
     File path = numWidget == 1 ? _path1 : _path2;
