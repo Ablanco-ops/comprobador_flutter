@@ -1,40 +1,46 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:comprobador_flutter/exportar_excel.dart';
-import 'package:syncfusion_flutter_pdf/pdf.dart';
-
-import 'common.dart';
 
 import 'package:comprobador_flutter/common.dart';
+import 'package:comprobador_flutter/exportar_excel.dart';
+import 'package:comprobador_flutter/modelo/archivo_datos.dart';
 import 'package:comprobador_flutter/modelo/entrada_datos.dart';
 import 'package:comprobador_flutter/modelo/modelo_datos.dart';
+import 'package:comprobador_flutter/pdf_extractor.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:excel/excel.dart';
+import 'package:flutter/foundation.dart';
+
+import 'common.dart';
+import 'excel_extractor.dart';
 
 class Datos extends ChangeNotifier {
-  late File _path1;
-  late File _path2;
+  File _path1 = File('');
+  File _path2 = File('');
 
   List<EntradaDatos> _listaEntradas1 = [];
   List<EntradaDatos> _listaEntradas2 = [];
-  late ModeloDatos _modelo1;
-  late ModeloDatos _modelo2;
+  late ArchivoDatos _archivo1;
+  late ArchivoDatos _archivo2;
 
-  String nombreModelo1 = 'Modelo';
-  String nombreModelo2 = 'Modelo';
+  String nombreArchivo1 = 'Modelo';
+  String nombreArchivo2 = 'Modelo';
 
-  void obtenerDatos(int numWidget, TipoDatos tipoDatos) {
+  void obtenerDatos(int numWidget) {
     File path = numWidget == 1 ? _path1 : _path2;
-    ModeloDatos modelo = numWidget == 1 ? _modelo1 : _modelo2;
+    ArchivoDatos archivo = numWidget == 1 ? _archivo1 : _archivo2;
     List<EntradaDatos> listaEntradas = [];
-    if (tipoDatos == TipoDatos.pdf) {
-      listaEntradas = leerPdf(path);
+    if (archivo.formato == TipoDatos.pdf) {
+      listaEntradas.addAll(leerPdf(path));
     } else {
-      listaEntradas = leerExcel(path, modelo);
+      print('archivo excel $path');
+      for (ModeloDatos modelo in archivo.listaModelos){
+        listaEntradas.addAll(leerExcel(path, modelo));
+      }
+      
     }
     for (EntradaDatos entrada in listaEntradas) {
-      print(entrada.toString());
+      if (kDebugMode) {
+        print(entrada.toString());
+      }
     }
     listaEntradas.sort((a, b) => a.identificador.compareTo(b.identificador));
     numWidget == 1
@@ -44,27 +50,24 @@ class Datos extends ChangeNotifier {
   }
 
   Future<void> seleccionarArchivo(int numWidget) async {
-    TipoDatos tipoDatos = TipoDatos.xlsx;
     FilePickerResult? result = await FilePicker.platform
         .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx', 'pdf']);
     if (result != null) {
-      if (result.files.single.extension == 'pdf') {
-        tipoDatos = TipoDatos.pdf;
-      }
       numWidget == 1
           ? _path1 = File(result.files.single.path!)
           : _path2 = File(result.files.single.path!);
-      obtenerDatos(numWidget, tipoDatos);
+      obtenerDatos(numWidget);
     }
+    notifyListeners();
   }
 
-  void setModelo(int numWidget, ModeloDatos modelo) {
+  void setArchivo(int numWidget, ArchivoDatos archivo) {
     if (numWidget == 1) {
-      _modelo1 = modelo;
-      nombreModelo1 = modelo.nombre;
+      _archivo1 = archivo;
+      nombreArchivo1 = archivo.nombre;
     } else {
-      _modelo2 = modelo;
-      nombreModelo2 = modelo.nombre;
+      _archivo2 = archivo;
+      nombreArchivo2 = archivo.nombre;
     }
     notifyListeners();
   }
@@ -77,11 +80,19 @@ class Datos extends ChangeNotifier {
     }
   }
 
-  ModeloDatos getModelo(numWidget) {
+  ArchivoDatos getModelo(numWidget) {
     if (numWidget == 1) {
-      return _modelo1;
+      return _archivo1;
     } else {
-      return _modelo2;
+      return _archivo2;
+    }
+  }
+
+  File getPath(numWidget) {
+    if (numWidget == 1) {
+      return _path1;
+    } else {
+      return _path2;
     }
   }
 
@@ -105,96 +116,7 @@ class Datos extends ChangeNotifier {
 
   void exportar() {
     // ExportarExcel.exceltest();
-    ExportarExcel.crearExcel(_listaEntradas1,_listaEntradas2, nombreModelo1, nombreModelo2);
-  }
-
-  List<EntradaDatos> leerExcel(File path, ModeloDatos modelo) {
-    List<EntradaDatos> listaEntradas = [];
-
-    var bytes = path.readAsBytesSync();
-    Excel excel = Excel.decodeBytes(bytes);
-    Sheet hoja = excel[modelo.sheet];
-    String fecha = '';
-
-    for (int i = modelo.primeraFila; i <= hoja.maxRows; i++) {
-      if (hoja
-              .cell(CellIndex.indexByString(modelo.idColumna + i.toString()))
-              .value !=
-          null) {
-        String id = hoja
-            .cell(CellIndex.indexByString(modelo.idColumna + i.toString()))
-            .value;
-        if (hoja
-                .cell(CellIndex.indexByString(modelo.fecha + i.toString()))
-                .value !=
-            null) {
-          fecha = hoja
-              .cell(CellIndex.indexByString(modelo.fecha + i.toString()))
-              .value
-              .toString();
-        }
-
-        String cantidad = hoja
-            .cell(
-                CellIndex.indexByString(modelo.cantidadColumna + i.toString()))
-            .value
-            .toString();
-        // print(fecha + '|' + id + '|' + cantidad);
-        if (listaEntradas.any((element) => element.identificador == id)) {
-          var entrada = listaEntradas
-              .firstWhere((element) => element.identificador == id);
-          entrada.cantidad =
-              toPrecision(2, entrada.cantidad + double.parse(cantidad));
-        } else {
-          listaEntradas.add(EntradaDatos(
-              identificador: id,
-              cantidad: double.parse(cantidad),
-              modelo: modelo.nombre,
-              fecha: fecha));
-        }
-      }
-    }
-    return listaEntradas;
-  }
-
-  List<EntradaDatos> leerPdf(File file) {
-    final reId = RegExp(r"[0-9]{2}-[0-9]{5}");
-    final reCantidad = RegExp(r'-[0,9]+');
-    final reFecha = RegExp(r'[0-3][0-9]\.[0-1][0-9]\.[0-9][0-9]');
-    List<EntradaDatos> listaEntradas = [];
-    String rawText = '';
-
-    try {
-      final PdfDocument document =
-          PdfDocument(inputBytes: file.readAsBytesSync());
-      rawText = PdfTextExtractor(document).extractText();
-      document.dispose();
-    } catch (e) {
-      print(e.toString());
-    }
-
-    List<String> listaPedidosRaw = rawText.split('0,00');
-    listaPedidosRaw.retainWhere((element) => element.contains(reId));
-    // List<List<String>> filteredListaPedidos = [];
-    for (String pedidoRaw in listaPedidosRaw) {
-      String id = reId.firstMatch(pedidoRaw)!.group(0)!;
-      String fecha = reFecha.firstMatch(pedidoRaw)!.group(0)!;
-      var listatotal = const LineSplitter().convert(pedidoRaw);
-      double cantidad = 0;
-      cantidad = double.parse(listatotal.last);
-      if (listaEntradas.any((element) => element.identificador == id)) {
-        var entrada =
-            listaEntradas.firstWhere((element) => element.identificador == id);
-        entrada.cantidad = toPrecision(2, entrada.cantidad + cantidad);
-      } else {
-        listaEntradas.add(EntradaDatos(
-            identificador: id,
-            cantidad: cantidad,
-            modelo: 'CHEP pdf',
-            fecha: fecha));
-      }
-    }
-    
-    return listaEntradas;
+    ExportarExcel.crearExcel(
+        _listaEntradas1, _listaEntradas2, nombreArchivo1, nombreArchivo2);
   }
 }

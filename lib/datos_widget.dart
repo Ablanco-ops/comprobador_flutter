@@ -1,5 +1,5 @@
 import 'package:comprobador_flutter/common.dart';
-import 'package:comprobador_flutter/modelo/modelo_datos.dart';
+import 'package:comprobador_flutter/modelo/archivo_datos.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -61,25 +61,30 @@ class DatosWidget extends StatelessWidget {
         color: Colors.white,
         height: display.height*0.25,
         width: display.width*0.3,
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        child: Column(
           children: [
-            Padding(
-              padding: const EdgeInsets.all(8.0),
-              child: PopupMenuButton<ModeloDatos>(
-                  child: Text(
-                      numWidget == 1 ? datos.nombreModelo1 : datos.nombreModelo2),
-                  onSelected: (value) => datos.setModelo(numWidget, value),
-                  itemBuilder: (BuildContext context) => listaModelos
-                      .map((modelo) => PopupMenuItem<ModeloDatos>(
-                            value: modelo,
-                            child: Text(modelo.nombre),
-                          ))
-                      .toList()),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(8.0),
+                  child: PopupMenuButton<ArchivoDatos>(
+                      child: Text(
+                          numWidget == 1 ? datos.nombreArchivo1 : datos.nombreArchivo2),
+                      onSelected: (value) => datos.setArchivo(numWidget, value),
+                      itemBuilder: (BuildContext context) => listaArchivosDatos
+                          .map((archivo) => PopupMenuItem<ArchivoDatos>(
+                                value: archivo,
+                                child: Text(archivo.nombre),
+                              ))
+                          .toList()),
+                ),
+                ElevatedButton(
+                    onPressed: () => datos.seleccionarArchivo(numWidget),
+                    child: const Text('Seleccionar Archivo'))
+              ],
             ),
-            ElevatedButton(
-                onPressed: () => datos.seleccionarArchivo(numWidget),
-                child: const Text('Seleccionar Archivo'))
+            Text(datos.getPath(numWidget).path)
           ],
         ),
       )
