@@ -6,11 +6,13 @@ import 'package:comprobador_flutter/modelo/archivo_datos.dart';
 import 'package:comprobador_flutter/modelo/entrada_datos.dart';
 import 'package:comprobador_flutter/modelo/modelo_datos.dart';
 import 'package:comprobador_flutter/pdf_extractor.dart';
+import 'package:comprobador_flutter/preferences.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
-import 'common.dart';
-import 'excel_extractor.dart';
+import '../common.dart';
+import '../excel_extractor.dart';
 
 class Datos extends ChangeNotifier {
   File _path1 = File('');
@@ -24,18 +26,26 @@ class Datos extends ChangeNotifier {
   String nombreArchivo1 = 'Tipo de archivo';
   String nombreArchivo2 = 'Tipo de archivo';
 
+  String pathExcelExport = '';
+
+  void detectarArchivo(File file){
+
+  }
+
   void obtenerDatos(int numWidget) {
     File path = numWidget == 1 ? _path1 : _path2;
     ArchivoDatos archivo = numWidget == 1 ? _archivo1 : _archivo2;
     List<EntradaDatos> listaEntradas = [];
+    notifyListeners();
     if (archivo.formato == TipoDatos.pdf) {
       listaEntradas.addAll(leerPdf(path));
     } else {
-      print('archivo excel $path');
-      for (ModeloDatos modelo in archivo.listaModelos){
+      if (kDebugMode) {
+        print('archivo excel $path');
+      }
+      for (ModeloDatos modelo in archivo.listaModelos) {
         listaEntradas.addAll(leerExcel(path, modelo));
       }
-      
     }
     for (EntradaDatos entrada in listaEntradas) {
       if (kDebugMode) {
@@ -53,10 +63,23 @@ class Datos extends ChangeNotifier {
     FilePickerResult? result = await FilePicker.platform
         .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx', 'pdf']);
     if (result != null) {
+      if (result.files.single.extension == 'pdf'){
+        
+      }
       numWidget == 1
           ? _path1 = File(result.files.single.path!)
           : _path2 = File(result.files.single.path!);
+      
       obtenerDatos(numWidget);
+    }
+    notifyListeners();
+  }
+
+  Future<void> seleccionarPathExcel() async {
+    String? result = await FilePicker.platform.getDirectoryPath();
+    if (result != null) {
+      Preferences.setPathExcel(result);
+      pathExcelExport = result;
     }
     notifyListeners();
   }
@@ -114,9 +137,16 @@ class Datos extends ChangeNotifier {
     }
   }
 
-  void exportar() {
+  void exportar(BuildContext context) {
     // ExportarExcel.exceltest();
-    ExportarExcel.crearExcel(
-        _listaEntradas1, _listaEntradas2, nombreArchivo1, nombreArchivo2);
+    Preferences.getPathExcel().then((value) => pathExcelExport = value);
+    if (pathExcelExport != '') {
+      ExportarExcel.crearExcel(_listaEntradas1, _listaEntradas2, nombreArchivo1,
+          nombreArchivo2, pathExcelExport);
+      customSnack('Excel creado en: $pathExcelExport', context);
+    } else {
+      customSnack(
+          'Seleccione el directorio de destino en configuracion', context);
+    }
   }
 }

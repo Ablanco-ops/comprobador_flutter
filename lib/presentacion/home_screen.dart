@@ -1,5 +1,5 @@
-import 'package:comprobador_flutter/configuracion_modelos.dart';
-import 'package:comprobador_flutter/datos_provider.dart';
+import 'package:comprobador_flutter/presentacion/configuracion_modelos.dart';
+import 'package:comprobador_flutter/providers/datos_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -28,7 +28,7 @@ class HomeScreen extends StatelessWidget {
             ),
             ListTile(
               title: const Text('Archivos de datos'),
-              trailing: IconButton(
+              leading: IconButton(
                 icon: const Icon(Icons.architecture_outlined),
                 onPressed: () => Navigator.of(context)
                     .pushNamed(ConfiguracionModelos.routeName),
@@ -36,11 +36,19 @@ class HomeScreen extends StatelessWidget {
             ),
             ListTile(
                 title: const Text('Modelo de datos'),
-                trailing: IconButton(
+                leading: IconButton(
                   icon: const Icon(Icons.architecture_outlined),
                   onPressed: () => Navigator.of(context)
                       .pushNamed(ConfiguracionModelos.routeName),
                 )),
+            ListTile(
+              title: const Text('Carpeta de destino del archivo excel'),
+              subtitle: Text(datos.pathExcelExport),
+              leading: IconButton(
+                icon: const Icon(Icons.edit),
+                onPressed: datos.seleccionarPathExcel,
+              ),
+            )
           ],
         ),
       ),
@@ -67,7 +75,7 @@ class HomeScreen extends StatelessWidget {
                     height: display.height * 0.1,
                   ),
                   ElevatedButton(
-                      onPressed: datos.exportar,
+                      onPressed: () => datos.exportar(context),
                       child: const Text('Exportar excel'))
                 ],
               ),

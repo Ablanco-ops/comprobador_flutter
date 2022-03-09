@@ -1,8 +1,8 @@
 
 
-import 'package:comprobador_flutter/configuracion_modelos.dart';
-import 'package:comprobador_flutter/datos_provider.dart';
-import 'package:comprobador_flutter/home_screen.dart';
+import 'package:comprobador_flutter/presentacion/configuracion_modelos.dart';
+import 'package:comprobador_flutter/providers/datos_provider.dart';
+import 'package:comprobador_flutter/presentacion/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 

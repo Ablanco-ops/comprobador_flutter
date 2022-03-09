@@ -7,9 +7,13 @@ import 'package:collection/collection.dart';
 import 'modelo/entrada_datos.dart';
 
 class ExportarExcel {
-  static crearExcel(List<EntradaDatos> listaEntradas1,
-      List<EntradaDatos> listaEntradas2, String modelo1, String modelo2) {
-    Workbook workbook = new Workbook();
+  static crearExcel(
+      List<EntradaDatos> listaEntradas1,
+      List<EntradaDatos> listaEntradas2,
+      String modelo1,
+      String modelo2,
+      String path) {
+    Workbook workbook = Workbook();
     Worksheet hoja = workbook.worksheets[0];
 
     final DateTime fechaRaw = DateTime.now();
@@ -25,8 +29,8 @@ class ExportarExcel {
 
     hoja.getRangeByName('B4').setText('Fecha');
     hoja.getRangeByName('C4').setText('Identificador');
-    hoja.getRangeByName('D4').setText('Cantidad modelo 1');
-    hoja.getRangeByName('D4').setText('Cantidad modelo 2');
+    hoja.getRangeByName('D4').setText('Cantidad Modelo 1');
+    hoja.getRangeByName('D5').setText('Cantidad Modelo 2');
 
     int index = 5;
     for (EntradaDatos entrada in listaEntradas1) {
@@ -54,7 +58,7 @@ class ExportarExcel {
     }
 
     final List<int> bytes = workbook.saveAsStream();
-    File('PunteoExportado-$fecha.xlsx').writeAsBytes(bytes);
+    File(path + '/${modelo1}_punteado-$fecha.xlsx').writeAsBytes(bytes);
     workbook.dispose();
   }
 }

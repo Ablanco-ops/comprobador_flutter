@@ -14,7 +14,6 @@ List<EntradaDatos> leerExcel(File path, ModeloDatos modelo) {
   Excel excel = Excel.decodeBytes(bytes);
   Sheet hoja = excel[modelo.sheet];
   String fecha = '';
-  bool datosCorrectos = true;
   for (String valor in modelo.comprobante.keys){
     if (hoja.cell(CellIndex.indexByString(valor)).value != modelo.comprobante[valor]){
       return listaEntradas;
