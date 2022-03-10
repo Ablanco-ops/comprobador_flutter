@@ -36,7 +36,7 @@ class DatosWidget extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-              height: display.height * 0.70,
+              height: display.height * 0.65,
               width: display.width * 0.4,
               // color: Colors.red,
               child: datos.getListEntradas(numWidget).isEmpty
@@ -64,7 +64,7 @@ class DatosWidget extends StatelessWidget {
                         );
                       })),
           Container(
-            height: display.height * 0.18,
+            height: display.height * 0.15,
             width: display.width * 0.4,
             color: Colors.white,
             child: Column(
@@ -105,7 +105,7 @@ class DatosWidget extends StatelessWidget {
                     Padding(
                       padding: customPadding,
                       child: ElevatedButton(
-                          onPressed: () => datos.seleccionarArchivo(numWidget),
+                          onPressed: () => datos.seleccionarArchivo(numWidget, context),
                           child: const Text('Seleccionar Archivo')),
                     )
                   ],

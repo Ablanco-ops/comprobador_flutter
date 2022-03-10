@@ -4,7 +4,6 @@ import 'package:comprobador_flutter/common.dart';
 import 'package:comprobador_flutter/exportar_excel.dart';
 import 'package:comprobador_flutter/modelo/archivo_datos.dart';
 import 'package:comprobador_flutter/modelo/entrada_datos.dart';
-import 'package:comprobador_flutter/modelo/modelo_datos.dart';
 import 'package:comprobador_flutter/pdf_extractor.dart';
 import 'package:comprobador_flutter/preferences.dart';
 import 'package:file_picker/file_picker.dart';
@@ -28,24 +27,27 @@ class Datos extends ChangeNotifier {
 
   String pathExcelExport = '';
 
-  void detectarArchivo(File file){
 
-  }
-
-  void obtenerDatos(int numWidget) {
+  void obtenerDatos(int numWidget, TipoDatos tipoDatos, BuildContext context) {
     File path = numWidget == 1 ? _path1 : _path2;
-    ArchivoDatos archivo = numWidget == 1 ? _archivo1 : _archivo2;
+    // ArchivoDatos archivo = numWidget == 1 ? _archivo1 : _archivo2;
     List<EntradaDatos> listaEntradas = [];
     notifyListeners();
-    if (archivo.formato == TipoDatos.pdf) {
-      listaEntradas.addAll(leerPdf(path));
+    if (tipoDatos == TipoDatos.pdf) {
+      
+        listaEntradas.addAll(leerPdf(path, context));
+      
+      
+      
     } else {
       if (kDebugMode) {
         print('archivo excel $path');
       }
-      for (ModeloDatos modelo in archivo.listaModelos) {
-        listaEntradas.addAll(leerExcel(path, modelo));
-      }
+      // for (ModeloDatos modelo in archivo.listaModelos) {
+      //   listaEntradas.addAll(leerExcel(path, modelo));
+      // }
+      ExcelExtractor extractor = ExcelExtractor(path,context);
+      listaEntradas = extractor.procesarExcel();
     }
     for (EntradaDatos entrada in listaEntradas) {
       if (kDebugMode) {
@@ -59,18 +61,19 @@ class Datos extends ChangeNotifier {
     notifyListeners();
   }
 
-  Future<void> seleccionarArchivo(int numWidget) async {
+  Future<void> seleccionarArchivo(int numWidget, BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform
         .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx', 'pdf']);
     if (result != null) {
-      if (result.files.single.extension == 'pdf'){
-        
-      }
       numWidget == 1
           ? _path1 = File(result.files.single.path!)
           : _path2 = File(result.files.single.path!);
-      
-      obtenerDatos(numWidget);
+
+      if (result.files.single.extension == 'pdf') {
+        obtenerDatos(numWidget, TipoDatos.pdf, context);
+      } else {
+        obtenerDatos(numWidget, TipoDatos.xlsx, context);
+      }
     }
     notifyListeners();
   }

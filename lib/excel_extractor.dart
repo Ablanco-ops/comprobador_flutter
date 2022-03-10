@@ -1,62 +1,135 @@
 import 'dart:io';
 
+import 'package:comprobador_flutter/almacen_datos.dart';
+import 'package:comprobador_flutter/excepciones.dart';
+import 'package:comprobador_flutter/modelo/archivo_datos.dart';
 import 'package:excel/excel.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
 import 'common.dart';
 import 'modelo/entrada_datos.dart';
 import 'modelo/modelo_datos.dart';
 
-List<EntradaDatos> leerExcel(File path, ModeloDatos modelo) {
-  List<EntradaDatos> listaEntradas = [];
+class ExcelExtractor {
+  final File _file;
+  final BuildContext context;
+  late Excel excel;
+  late ArchivoDatos _archivoDatos;
 
-  var bytes = path.readAsBytesSync();
-  Excel excel = Excel.decodeBytes(bytes);
-  Sheet hoja = excel[modelo.sheet];
-  String fecha = '';
-  for (String valor in modelo.comprobante.keys){
-    if (hoja.cell(CellIndex.indexByString(valor)).value != modelo.comprobante[valor]){
-      return listaEntradas;
+  ExcelExtractor(this._file, this.context);
+
+  List<EntradaDatos> procesarExcel() {
+    getExcel();
+    if (getArchivo()) {
+      return leerExcel();
+    } else {
+      return [];
     }
   }
 
-  for (int i = modelo.primeraFila; i <= hoja.maxRows; i++) {
-    if (hoja
-            .cell(CellIndex.indexByString(modelo.idColumna + i.toString()))
-            .value !=
-        null) {
-      String id = hoja
-          .cell(CellIndex.indexByString(modelo.idColumna + i.toString()))
-          .value;
-      if (hoja
-              .cell(CellIndex.indexByString(modelo.fecha + i.toString()))
-              .value !=
-          null) {
-        fecha = hoja
-            .cell(CellIndex.indexByString(modelo.fecha + i.toString()))
-            .value
-            .toString();
-      }
-      String cantidad = hoja
-          .cell(CellIndex.indexByString(modelo.cantidadColumna + i.toString()))
-          .value
-          .toString();
+  void getExcel() {
+    try {
+      var bytes = _file.readAsBytesSync();
+      excel = Excel.decodeBytes(bytes);
+    } catch (e) {
+      mostrarError(TipoError.lectura, context);
+    }
+  }
+
+  bool getArchivo() {
+    Set<String> listaHojas = {};
+    for (var hoja in excel.tables.keys) {
       if (kDebugMode) {
-        print(fecha + '|' + id + '|' + cantidad);
+        print(hoja);
       }
-      if (listaEntradas.any((element) => element.identificador == id)) {
-        var entrada =
-            listaEntradas.firstWhere((element) => element.identificador == id);
-        entrada.cantidad =
-            toPrecision(2, entrada.cantidad + double.parse(cantidad));
-      } else {
-        listaEntradas.add(EntradaDatos(
-            identificador: id,
-            cantidad: double.parse(cantidad),
-            modelo: modelo.nombre,
-            fecha: fecha));
+      listaHojas.add(hoja);
+    }
+    bool encontrado = false;
+    for (ArchivoDatos archivo in listaArchivosDatos) {
+      if (listaHojas.containsAll(archivo.listaHojas)) {
+        _archivoDatos = archivo;
+        encontrado = true;
+        if (kDebugMode) {
+          print(_archivoDatos.nombre);
+        }
+        break;
       }
     }
+    if (!encontrado) {
+      mostrarExcepcion(TipoExcepcion.archivoIncorrecto, context);
+    }
+    return encontrado;
   }
-  return listaEntradas;
+
+  List<EntradaDatos> leerExcel() {
+    List<EntradaDatos> listaEntradas = [];
+
+    for (ModeloDatos modelo in _archivoDatos.listaModelos) {
+      Sheet hoja = excel[modelo.sheet];
+
+      String fecha = '';
+      for (String valor in modelo.comprobante.keys) {
+        if (hoja.cell(CellIndex.indexByString(valor)).value !=
+            modelo.comprobante[valor]) {
+          return listaEntradas;
+        }
+      }
+
+      for (int i = modelo.primeraFila; i <= hoja.maxRows; i++) {
+        String codProducto = '';
+        if (modelo.codProducto != null) {
+          codProducto = modelo.codProducto!;
+        }
+        if (modelo.codProductoColumna !=null){
+          if (hoja
+                .cell(CellIndex.indexByString(modelo.codProductoColumna! + i.toString()))
+                .value !=
+            null) {
+          codProducto= hoja
+              .cell(CellIndex.indexByString(modelo.codProductoColumna! + i.toString()))
+              .value;
+        }
+        if (hoja
+                .cell(CellIndex.indexByString(modelo.idColumna + i.toString()))
+                .value !=
+            null) {
+          String id = hoja
+              .cell(CellIndex.indexByString(modelo.idColumna + i.toString()))
+              .value;
+          if (hoja
+                  .cell(CellIndex.indexByString(modelo.fecha + i.toString()))
+                  .value !=
+              null) {
+            fecha = hoja
+                .cell(CellIndex.indexByString(modelo.fecha + i.toString()))
+                .value
+                .toString();
+          }
+          String cantidad = hoja
+              .cell(CellIndex.indexByString(
+                  modelo.cantidadColumna + i.toString()))
+              .value
+              .toString();
+          if (kDebugMode) {
+            print(fecha + '|' + id + '|' + cantidad);
+          }
+          if (listaEntradas.any((element) => element.identificador == id)) {
+            var entrada = listaEntradas
+                .firstWhere((element) => element.identificador == id);
+            entrada.cantidad =
+                toPrecision(2, entrada.cantidad + double.parse(cantidad));
+          } else {
+            listaEntradas.add(EntradaDatos(
+                identificador: id,
+                cantidad: double.parse(cantidad),
+                modelo: modelo.nombre,
+                fecha: fecha));
+          }
+        }
+      }
+    }
+
+    return listaEntradas;
+  }
 }
