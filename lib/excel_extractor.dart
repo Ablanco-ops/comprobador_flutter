@@ -81,14 +81,17 @@ class ExcelExtractor {
         if (modelo.codProducto != null) {
           codProducto = modelo.codProducto!;
         }
-        if (modelo.codProductoColumna !=null){
+        if (modelo.codProductoColumna != null) {
           if (hoja
-                .cell(CellIndex.indexByString(modelo.codProductoColumna! + i.toString()))
-                .value !=
-            null) {
-          codProducto= hoja
-              .cell(CellIndex.indexByString(modelo.codProductoColumna! + i.toString()))
-              .value;
+                  .cell(CellIndex.indexByString(
+                      modelo.codProductoColumna! + i.toString()))
+                  .value !=
+              null) {
+            codProducto = hoja
+                .cell(CellIndex.indexByString(
+                    modelo.codProductoColumna! + i.toString()))
+                .value;
+          }
         }
         if (hoja
                 .cell(CellIndex.indexByString(modelo.idColumna + i.toString()))
@@ -111,25 +114,34 @@ class ExcelExtractor {
                   modelo.cantidadColumna + i.toString()))
               .value
               .toString();
-          if (kDebugMode) {
-            print(fecha + '|' + id + '|' + cantidad);
-          }
+          // if (kDebugMode) {
+          //   print(fecha + '|' + id + '|' + cantidad);
+          // }
           if (listaEntradas.any((element) => element.identificador == id)) {
             var entrada = listaEntradas
                 .firstWhere((element) => element.identificador == id);
             entrada.cantidad =
                 toPrecision(2, entrada.cantidad + double.parse(cantidad));
           } else {
-            listaEntradas.add(EntradaDatos(
-                identificador: id,
-                cantidad: double.parse(cantidad),
-                modelo: modelo.nombre,
-                fecha: fecha));
+            if (codProducto == '') {
+              listaEntradas.add(EntradaDatos(
+                  identificador: id,
+                  cantidad: double.parse(cantidad),
+                  modelo: modelo.nombre,
+                  fecha: fecha));
+            } else {
+              listaEntradas.add(EntradaDatos(
+                  identificador: id,
+                  codProducto: codProducto,
+                  cantidad: double.parse(cantidad),
+                  modelo: modelo.nombre,
+                  fecha: fecha));
+            }
           }
         }
       }
     }
-
+    print(listaEntradas);
     return listaEntradas;
   }
 }

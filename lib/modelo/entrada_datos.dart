@@ -16,6 +16,7 @@ class EntradaDatos {
   });
 
   @override
-  String toString() =>
-      'EntradaDatos(identificador: $identificador, cantidad: $cantidad, modelo: $modelo)';
+  String toString() {
+    return 'EntradaDatos(identificador: $identificador, codProducto: $codProducto, cantidad: $cantidad, modelo: $modelo, fecha: $fecha, encontrado: $encontrado)';
+  }
 }
