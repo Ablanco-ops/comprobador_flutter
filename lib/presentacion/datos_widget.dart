@@ -1,9 +1,7 @@
 import 'package:comprobador_flutter/common.dart';
-import 'package:comprobador_flutter/modelo/archivo_datos.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../almacen_datos.dart';
 import '../providers/datos_provider.dart';
 
 class DatosWidget extends StatelessWidget {
@@ -52,9 +50,7 @@ class DatosWidget extends StatelessWidget {
                           tileColor: getColor(datos
                               .getListEntradas(numWidget)[index]
                               .encontrado),
-                          title: Text(datos
-                              .getListEntradas(numWidget)[index]
-                              .identificador),
+                          title: Text(datos.getId(numWidget, index)) ,
                           trailing: Text(datos
                               .getListEntradas(numWidget)[index]
                               .cantidad
@@ -73,34 +69,8 @@ class DatosWidget extends StatelessWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Container(
-                      padding: customPadding,
-                      decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        color: Theme.of(context).primaryColor,
-                      ),
-                      child: Container(
-                        margin: customPadding,
-                        child: PopupMenuButton<ArchivoDatos>(
-                            color: Theme.of(context).primaryColor,
-                            child: Text(
-                              numWidget == 1
-                                  ? datos.nombreArchivo1
-                                  : datos.nombreArchivo2,
-                              style: const TextStyle(color: Colors.white),
-                            ),
-                            onSelected: (value) =>
-                                datos.setArchivo(numWidget, value),
-                            itemBuilder: (BuildContext context) =>
-                                listaArchivosDatos
-                                    .map((archivo) =>
-                                        PopupMenuItem<ArchivoDatos>(
-                                          value: archivo,
-                                          child: Text(archivo.nombre,
-                                              style: const TextStyle(
-                                                  color: Colors.white)),
-                                        ))
-                                    .toList()),
-                      ),
+                      margin: customPadding,
+                      child: Text(datos.getArchivo(numWidget)),
                     ),
                     Padding(
                       padding: customPadding,

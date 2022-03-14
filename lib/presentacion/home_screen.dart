@@ -1,3 +1,4 @@
+import 'package:comprobador_flutter/common.dart';
 import 'package:comprobador_flutter/presentacion/configuracion_modelos.dart';
 import 'package:comprobador_flutter/providers/datos_provider.dart';
 import 'package:flutter/material.dart';
@@ -71,6 +72,16 @@ class HomeScreen extends StatelessWidget {
                   ElevatedButton(
                       onPressed: datos.cruzarDatos,
                       child: const Text('Cruzar datos')),
+                  SizedBox(
+                    height: display.height * 0.1,
+                  ),
+                  PopupMenuButton<Encontrado>(
+                      child: const Text('Filtrar Datos'),
+                      onSelected: (value) => datos.filtrarDatos(value),
+                      itemBuilder: (BuildContext context) => Encontrado.values
+                          .map((e) => PopupMenuItem<Encontrado>(
+                              value: e, child: Text(e.name)))
+                          .toList()),
                   SizedBox(
                     height: display.height * 0.1,
                   ),

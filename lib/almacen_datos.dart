@@ -151,7 +151,7 @@ List<ArchivoDatos> listaArchivosDatos = [
         fecha: 'D',
         comprobante: {'B1': 'IVA PROVEEDORES'})
   ], listaHojas: {
-    'Excel Clientes',
-    'Excel Proveedores'
+    'Clientes',
+    'Proveedores'
   })
 ];

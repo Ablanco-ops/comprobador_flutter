@@ -77,7 +77,7 @@ class ExcelExtractor {
       }
 
       for (int i = modelo.primeraFila; i <= hoja.maxRows; i++) {
-        String codProducto = '';
+        String? codProducto;
         if (modelo.codProducto != null) {
           codProducto = modelo.codProducto!;
         }
@@ -109,31 +109,30 @@ class ExcelExtractor {
                 .value
                 .toString();
           }
-          String cantidad = hoja
+          double cantidad = (hoja
               .cell(CellIndex.indexByString(
                   modelo.cantidadColumna + i.toString()))
-              .value
-              .toString();
+              .value).toDouble() ;
           // if (kDebugMode) {
           //   print(fecha + '|' + id + '|' + cantidad);
           // }
-          if (listaEntradas.any((element) => element.identificador == id)) {
+          if (listaEntradas.any((element) => element.identificador == id && element.codProducto == codProducto)) {
             var entrada = listaEntradas
                 .firstWhere((element) => element.identificador == id);
             entrada.cantidad =
-                toPrecision(2, entrada.cantidad + double.parse(cantidad));
+                toPrecision(2, entrada.cantidad + cantidad);
           } else {
             if (codProducto == '') {
               listaEntradas.add(EntradaDatos(
                   identificador: id,
-                  cantidad: double.parse(cantidad),
+                  cantidad: toPrecision(2, cantidad),
                   modelo: modelo.nombre,
                   fecha: fecha));
             } else {
               listaEntradas.add(EntradaDatos(
                   identificador: id,
                   codProducto: codProducto,
-                  cantidad: double.parse(cantidad),
+                  cantidad: toPrecision(2, cantidad),
                   modelo: modelo.nombre,
                   fecha: fecha));
             }
@@ -141,7 +140,9 @@ class ExcelExtractor {
         }
       }
     }
-    print(listaEntradas);
+    if (kDebugMode) {
+      print(listaEntradas);
+    }
     return listaEntradas;
   }
 }

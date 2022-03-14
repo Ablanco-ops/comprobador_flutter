@@ -19,34 +19,27 @@ class Datos extends ChangeNotifier {
 
   List<EntradaDatos> _listaEntradas1 = [];
   List<EntradaDatos> _listaEntradas2 = [];
+  List<EntradaDatos> _listaEntradas1Filtrado = [];
+  List<EntradaDatos> _listaEntradas2Filtrado = [];
   late ArchivoDatos _archivo1;
   late ArchivoDatos _archivo2;
 
-  String nombreArchivo1 = 'Tipo de archivo';
-  String nombreArchivo2 = 'Tipo de archivo';
+  String _nombreArchivo1 = 'Tipo de archivo';
+  String _nombreArchivo2 = 'Tipo de archivo';
 
   String pathExcelExport = '';
 
-
   void obtenerDatos(int numWidget, TipoDatos tipoDatos, BuildContext context) {
     File path = numWidget == 1 ? _path1 : _path2;
-    // ArchivoDatos archivo = numWidget == 1 ? _archivo1 : _archivo2;
     List<EntradaDatos> listaEntradas = [];
     notifyListeners();
     if (tipoDatos == TipoDatos.pdf) {
-      
-        listaEntradas.addAll(leerPdf(path, context));
-      
-      
-      
+      listaEntradas.addAll(leerPdf(path, context));
     } else {
       if (kDebugMode) {
         print('archivo excel $path');
       }
-      // for (ModeloDatos modelo in archivo.listaModelos) {
-      //   listaEntradas.addAll(leerExcel(path, modelo));
-      // }
-      ExcelExtractor extractor = ExcelExtractor(path,context);
+      ExcelExtractor extractor = ExcelExtractor(path, context);
       listaEntradas = extractor.procesarExcel();
     }
     for (EntradaDatos entrada in listaEntradas) {
@@ -55,10 +48,48 @@ class Datos extends ChangeNotifier {
       }
     }
     listaEntradas.sort((a, b) => a.identificador.compareTo(b.identificador));
-    numWidget == 1
-        ? _listaEntradas1 = listaEntradas
-        : _listaEntradas2 = listaEntradas;
+    if (numWidget == 1) {
+      _listaEntradas1 = listaEntradas;
+      _listaEntradas1Filtrado = listaEntradas;
+    } else {
+      _listaEntradas2 = listaEntradas;
+      _listaEntradas2Filtrado = listaEntradas;
+    }
     notifyListeners();
+  }
+
+  void filtrarDatos(Encontrado filtro) {
+    _listaEntradas1Filtrado = _filtrarEntradas(filtro, _listaEntradas1);
+    _listaEntradas2Filtrado = _filtrarEntradas(filtro, _listaEntradas2);
+    notifyListeners();
+  }
+
+  List<EntradaDatos> _filtrarEntradas(
+      Encontrado filtro, List<EntradaDatos> lista) {
+    List<EntradaDatos> listaFiltrada = [];
+    listaFiltrada.addAll(lista);
+    if (kDebugMode) {
+      print('${_listaEntradas1.length} - ${_listaEntradas2.length}');
+    }
+    switch (filtro) {
+      case Encontrado.noEncontrado:
+        listaFiltrada.retainWhere(
+            (element) => element.encontrado == Encontrado.noEncontrado);
+        break;
+      case Encontrado.correcto:
+        listaFiltrada.retainWhere(
+            (element) => element.encontrado == Encontrado.correcto);
+        break;
+      case Encontrado.incorrecto:
+        listaFiltrada.retainWhere(
+            (element) => element.encontrado == Encontrado.incorrecto);
+        break;
+      default:
+    }
+    if (kDebugMode) {
+      print(listaFiltrada.length);
+    }
+    return listaFiltrada;
   }
 
   Future<void> seleccionarArchivo(int numWidget, BuildContext context) async {
@@ -90,23 +121,42 @@ class Datos extends ChangeNotifier {
   void setArchivo(int numWidget, ArchivoDatos archivo) {
     if (numWidget == 1) {
       _archivo1 = archivo;
-      nombreArchivo1 = archivo.nombre;
+      _nombreArchivo1 = archivo.nombre;
     } else {
       _archivo2 = archivo;
-      nombreArchivo2 = archivo.nombre;
+      _nombreArchivo2 = archivo.nombre;
     }
     notifyListeners();
   }
 
-  List<EntradaDatos> getListEntradas(numWidget) {
+  String getArchivo(int numWidget) {
     if (numWidget == 1) {
-      return _listaEntradas1;
+      return _nombreArchivo1;
     } else {
-      return _listaEntradas2;
+      return _nombreArchivo2;
     }
   }
 
-  ArchivoDatos getModelo(numWidget) {
+  List<EntradaDatos> getListEntradas(int numWidget) {
+    if (numWidget == 1) {
+      return _listaEntradas1Filtrado;
+    } else {
+      return _listaEntradas2Filtrado;
+    }
+  }
+
+  String getId(int numWidget, int index) {
+    List<EntradaDatos> entradas =
+        numWidget == 1 ? _listaEntradas1Filtrado : _listaEntradas2Filtrado;
+    String id = entradas[index].identificador;
+    String codProducto = '';
+    if (entradas[index].codProducto != null) {
+      codProducto = ' - ${entradas[index].codProducto}';
+    }
+    return '$id $codProducto';
+  }
+
+  ArchivoDatos getModelo(int numWidget) {
     if (numWidget == 1) {
       return _archivo1;
     } else {
@@ -114,7 +164,7 @@ class Datos extends ChangeNotifier {
     }
   }
 
-  File getPath(numWidget) {
+  File getPath(int numWidget) {
     if (numWidget == 1) {
       return _path1;
     } else {
@@ -144,8 +194,8 @@ class Datos extends ChangeNotifier {
     // ExportarExcel.exceltest();
     Preferences.getPathExcel().then((value) => pathExcelExport = value);
     if (pathExcelExport != '') {
-      ExportarExcel.crearExcel(_listaEntradas1, _listaEntradas2, nombreArchivo1,
-          nombreArchivo2, pathExcelExport);
+      ExportarExcel.crearExcel(_listaEntradas1Filtrado, _listaEntradas2Filtrado,
+          _nombreArchivo1, _nombreArchivo2, pathExcelExport);
       customSnack('Excel creado en: $pathExcelExport', context);
     } else {
       customSnack(
