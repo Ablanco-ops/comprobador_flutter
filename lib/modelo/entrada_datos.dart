@@ -1,12 +1,13 @@
 import 'package:comprobador_flutter/common.dart';
 
+
 class EntradaDatos {
   final String identificador;
   final String? codProducto;
   double cantidad;
   final String modelo;
   final String fecha;
-  Encontrado encontrado = Encontrado.noEncontrado;
+  Filtro encontrado = Filtro.noEncontrado;
   EntradaDatos({
     required this.identificador,
      this.codProducto,

@@ -65,27 +65,73 @@ class HomeScreen extends StatelessWidget {
               numWidget: 2,
             ),
             SizedBox(
-              height: display.height * 0.6,
+              height: display.height * 0.7,
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   ElevatedButton(
-                      onPressed: datos.cruzarDatos,
+                      onPressed: () => datos.cruzarDatos(context),
                       child: const Text('Cruzar datos')),
-                  SizedBox(
-                    height: display.height * 0.1,
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      const Text('Filtro: '),
+                      const SizedBox(width: 5),
+                      Material(
+                        elevation: 10,
+                        borderRadius: BorderRadius.circular(10),
+                        child: Container(
+                          width: display.width * 0.10,
+                          padding: customPadding,
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).primaryColorLight,
+                              borderRadius: BorderRadius.circular(10)),
+                          child: Center(
+                            child: PopupMenuButton<Filtro>(
+                                child:
+                                    Text(datos.filtroName(datos.filtroDatos)),
+                                onSelected: (value) =>
+                                    datos.filtrarDatos(value),
+                                itemBuilder: (BuildContext context) => Filtro
+                                    .values
+                                    .map((e) => PopupMenuItem<Filtro>(
+                                        value: e,
+                                        child: Text(datos.filtroName(e))))
+                                    .toList()),
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
-                  PopupMenuButton<Encontrado>(
-                      child: const Text('Filtrar Datos'),
-                      onSelected: (value) => datos.filtrarDatos(value),
-                      itemBuilder: (BuildContext context) => Encontrado.values
-                          .map((e) => PopupMenuItem<Encontrado>(
-                              value: e, child: Text(e.name)))
-                          .toList()),
+                  Container(
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.greenAccent)),
+                    height: display.height * 0.3,
+                    width: display.width * 0.2,
+                    child: Column(children: [
+                      // ListTile(
+                      //   title: const Text('Entradas'),
+                      //   trailing: Text(
+                      //       '${datos.getListEntradas(1).length} - ${datos.getListEntradas(2).length}'),
+                      // ),
+                      ListTile(
+                        title: const Text('No Encontrados'),
+                        trailing: Text(datos.noEncontrados.toString()),
+                      ),
+                      ListTile(
+                        title: const Text('Correctos'),
+                        trailing: Text(datos.correctos.toString()),
+                      ),
+                      ListTile(
+                        title: const Text('incorrectos'),
+                        trailing: Text(datos.incorrectos.toString()),
+                      ),
+                    ]),
+                  ),
                   SizedBox(
                     height: display.height * 0.1,
                   ),
                   ElevatedButton(
+                    style: ElevatedButton.styleFrom(primary: Colors.red),
                       onPressed: () => datos.exportar(context),
                       child: const Text('Exportar excel'))
                 ],

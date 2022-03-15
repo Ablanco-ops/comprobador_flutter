@@ -35,10 +35,10 @@ class ExportarExcel {
     int index = 5;
     for (EntradaDatos entrada in listaEntradas1) {
       var color = '#FFFFFF';
-      if (entrada.encontrado == Encontrado.correcto) {
+      if (entrada.encontrado == Filtro.correcto) {
         color = colorEncontrado;
       }
-      if (entrada.encontrado == Encontrado.incorrecto) {
+      if (entrada.encontrado == Filtro.incorrecto) {
         color = colorIncorrecto;
       }
       hoja.getRangeByName('B$index').setText(entrada.fecha);

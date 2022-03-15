@@ -1,3 +1,7 @@
+import 'package:json_annotation/json_annotation.dart';
+part 'modelo_datos.g.dart';
+
+@JsonSerializable()
 class ModeloDatos {
   final String nombre;
   final int primeraFila;
@@ -24,4 +28,8 @@ class ModeloDatos {
   String toString() {
     return 'ModeloDatos(nombre: $nombre, primeraFila: $primeraFila, idColumna: $idColumna, cantidadColumna: $cantidadColumna, sheet: $sheet, fecha: $fecha, comprobante: $comprobante)';
   }
+
+  factory ModeloDatos.fromJson(Map<String, dynamic> json) =>
+      _$ModeloDatosFromJson(json);
+  Map<String, dynamic> toJson() => _$ModeloDatosToJson(this);
 }

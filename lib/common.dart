@@ -1,14 +1,12 @@
-import 'dart:math';
-
 import 'package:flutter/material.dart';
 
 double toPrecision(int fractionDigits, double numero) {
   return (double.parse((numero).toStringAsFixed(fractionDigits)));
 }
 
-enum Encontrado {todo, noEncontrado, correcto, incorrecto }
+enum Filtro {todo, noEncontrado, correcto, incorrecto }
 enum TipoDatos { pdf, xlsx }
-enum FiltroDatos {todo, correcto, incorrecto, noEncontrado}
+
 
 
 const customPadding = EdgeInsets.all(8);

@@ -1,8 +1,8 @@
 import 'dart:io';
 
+import 'package:comprobador_flutter/almacen_datos.dart';
 import 'package:comprobador_flutter/common.dart';
 import 'package:comprobador_flutter/exportar_excel.dart';
-import 'package:comprobador_flutter/modelo/archivo_datos.dart';
 import 'package:comprobador_flutter/modelo/entrada_datos.dart';
 import 'package:comprobador_flutter/pdf_extractor.dart';
 import 'package:comprobador_flutter/preferences.dart';
@@ -21,18 +21,22 @@ class Datos extends ChangeNotifier {
   List<EntradaDatos> _listaEntradas2 = [];
   List<EntradaDatos> _listaEntradas1Filtrado = [];
   List<EntradaDatos> _listaEntradas2Filtrado = [];
-  late ArchivoDatos _archivo1;
-  late ArchivoDatos _archivo2;
+  // late ArchivoDatos _archivo1;
+  // late ArchivoDatos _archivo2;
+  int noEncontrados = 0;
+  int correctos = 0;
+  int incorrectos = 0;
 
-  String _nombreArchivo1 = 'Tipo de archivo';
-  String _nombreArchivo2 = 'Tipo de archivo';
+  String tipoArchivo1 = 'Tipo de archivo';
+  String tipoArchivo2 = 'Tipo de archivo';
+
+  Filtro filtroDatos = Filtro.todo;
 
   String pathExcelExport = '';
 
   void obtenerDatos(int numWidget, TipoDatos tipoDatos, BuildContext context) {
     File path = numWidget == 1 ? _path1 : _path2;
     List<EntradaDatos> listaEntradas = [];
-    notifyListeners();
     if (tipoDatos == TipoDatos.pdf) {
       listaEntradas.addAll(leerPdf(path, context));
     } else {
@@ -41,6 +45,13 @@ class Datos extends ChangeNotifier {
       }
       ExcelExtractor extractor = ExcelExtractor(path, context);
       listaEntradas = extractor.procesarExcel();
+      var archivoDatos = listaArchivosDatos.firstWhere((archivo) {
+        return archivo.listaModelos
+            .any((modelo) => modelo.nombre == listaEntradas[0].modelo);
+      });
+      numWidget == 1
+          ? tipoArchivo1 = archivoDatos.nombre
+          : tipoArchivo2 = archivoDatos.nombre;
     }
     for (EntradaDatos entrada in listaEntradas) {
       if (kDebugMode) {
@@ -58,31 +69,31 @@ class Datos extends ChangeNotifier {
     notifyListeners();
   }
 
-  void filtrarDatos(Encontrado filtro) {
+  void filtrarDatos(Filtro filtro) {
+    filtroDatos = filtro;
     _listaEntradas1Filtrado = _filtrarEntradas(filtro, _listaEntradas1);
     _listaEntradas2Filtrado = _filtrarEntradas(filtro, _listaEntradas2);
     notifyListeners();
   }
 
-  List<EntradaDatos> _filtrarEntradas(
-      Encontrado filtro, List<EntradaDatos> lista) {
+  List<EntradaDatos> _filtrarEntradas(Filtro filtro, List<EntradaDatos> lista) {
     List<EntradaDatos> listaFiltrada = [];
     listaFiltrada.addAll(lista);
     if (kDebugMode) {
       print('${_listaEntradas1.length} - ${_listaEntradas2.length}');
     }
     switch (filtro) {
-      case Encontrado.noEncontrado:
+      case Filtro.noEncontrado:
         listaFiltrada.retainWhere(
-            (element) => element.encontrado == Encontrado.noEncontrado);
+            (element) => element.encontrado == Filtro.noEncontrado);
         break;
-      case Encontrado.correcto:
-        listaFiltrada.retainWhere(
-            (element) => element.encontrado == Encontrado.correcto);
+      case Filtro.correcto:
+        listaFiltrada
+            .retainWhere((element) => element.encontrado == Filtro.correcto);
         break;
-      case Encontrado.incorrecto:
-        listaFiltrada.retainWhere(
-            (element) => element.encontrado == Encontrado.incorrecto);
+      case Filtro.incorrecto:
+        listaFiltrada
+            .retainWhere((element) => element.encontrado == Filtro.incorrecto);
         break;
       default:
     }
@@ -90,6 +101,19 @@ class Datos extends ChangeNotifier {
       print(listaFiltrada.length);
     }
     return listaFiltrada;
+  }
+
+  String filtroName(Filtro filtro) {
+    switch (filtro) {
+      case Filtro.correcto:
+        return 'Correctos';
+      case Filtro.incorrecto:
+        return 'Incorrectos';
+      case Filtro.noEncontrado:
+        return 'No encontrados';
+      default:
+        return 'Todos';
+    }
   }
 
   Future<void> seleccionarArchivo(int numWidget, BuildContext context) async {
@@ -118,24 +142,16 @@ class Datos extends ChangeNotifier {
     notifyListeners();
   }
 
-  void setArchivo(int numWidget, ArchivoDatos archivo) {
-    if (numWidget == 1) {
-      _archivo1 = archivo;
-      _nombreArchivo1 = archivo.nombre;
-    } else {
-      _archivo2 = archivo;
-      _nombreArchivo2 = archivo.nombre;
-    }
-    notifyListeners();
-  }
-
-  String getArchivo(int numWidget) {
-    if (numWidget == 1) {
-      return _nombreArchivo1;
-    } else {
-      return _nombreArchivo2;
-    }
-  }
+  // void setArchivo(int numWidget, ArchivoDatos archivo) {
+  //   if (numWidget == 1) {
+  //     _archivo1 = archivo;
+  //     tipoArchivo1 = archivo.nombre;
+  //   } else {
+  //     _archivo2 = archivo;
+  //     tipoArchivo2 = archivo.nombre;
+  //   }
+  //   notifyListeners();
+  // }
 
   List<EntradaDatos> getListEntradas(int numWidget) {
     if (numWidget == 1) {
@@ -156,14 +172,6 @@ class Datos extends ChangeNotifier {
     return '$id $codProducto';
   }
 
-  ArchivoDatos getModelo(int numWidget) {
-    if (numWidget == 1) {
-      return _archivo1;
-    } else {
-      return _archivo2;
-    }
-  }
-
   File getPath(int numWidget) {
     if (numWidget == 1) {
       return _path1;
@@ -172,19 +180,34 @@ class Datos extends ChangeNotifier {
     }
   }
 
-  void cruzarDatos() {
+  void cruzarDatos(BuildContext context) {
+    if (_listaEntradas1.isEmpty || _listaEntradas2.isEmpty) {
+      customSnack('No hay datos para comprobar', context);
+    }
     for (EntradaDatos entrada in _listaEntradas1) {
       if (_listaEntradas2
           .any((element) => element.identificador == entrada.identificador)) {
         var match = _listaEntradas2.firstWhere(
             (element) => element.identificador == entrada.identificador);
         if (entrada.cantidad.abs() == match.cantidad.abs()) {
-          entrada.encontrado = Encontrado.correcto;
-          match.encontrado = Encontrado.correcto;
+          entrada.encontrado = Filtro.correcto;
+          match.encontrado = Filtro.correcto;
         } else {
-          entrada.encontrado = Encontrado.incorrecto;
-          match.encontrado = Encontrado.incorrecto;
+          entrada.encontrado = Filtro.incorrecto;
+          match.encontrado = Filtro.incorrecto;
         }
+        noEncontrados = _listaEntradas1
+                .where((element) => element.encontrado == Filtro.noEncontrado)
+                .length +
+            _listaEntradas2
+                .where((element) => element.encontrado == Filtro.noEncontrado)
+                .length;
+        correctos = _listaEntradas1
+            .where((element) => element.encontrado == Filtro.correcto)
+            .length;
+        incorrectos = _listaEntradas1
+            .where((element) => element.encontrado == Filtro.incorrecto)
+            .length;
         notifyListeners();
       }
     }
@@ -193,13 +216,17 @@ class Datos extends ChangeNotifier {
   void exportar(BuildContext context) {
     // ExportarExcel.exceltest();
     Preferences.getPathExcel().then((value) => pathExcelExport = value);
-    if (pathExcelExport != '') {
-      ExportarExcel.crearExcel(_listaEntradas1Filtrado, _listaEntradas2Filtrado,
-          _nombreArchivo1, _nombreArchivo2, pathExcelExport);
-      customSnack('Excel creado en: $pathExcelExport', context);
-    } else {
+
+    if (pathExcelExport == '') {
       customSnack(
           'Seleccione el directorio de destino en configuracion', context);
+    } else if (_listaEntradas1Filtrado.isEmpty ||
+        _listaEntradas2Filtrado.isEmpty) {
+      customSnack('No hay datos cargados', context);
+    } else {
+      ExportarExcel.crearExcel(_listaEntradas1Filtrado, _listaEntradas2Filtrado,
+          tipoArchivo1, tipoArchivo2, pathExcelExport);
+      customSnack('Excel creado en: $pathExcelExport', context);
     }
   }
 }

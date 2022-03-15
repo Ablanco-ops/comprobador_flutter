@@ -16,10 +16,10 @@ class DatosWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final display = MediaQuery.of(context).size;
     final datos = Provider.of<Datos>(context);
-    MaterialColor getColor(Encontrado encontrado) {
-      if (encontrado == Encontrado.correcto) {
+    MaterialColor getColor(Filtro encontrado) {
+      if (encontrado == Filtro.correcto) {
         return Colors.green;
-      } else if (encontrado == Encontrado.incorrecto) {
+      } else if (encontrado == Filtro.incorrecto) {
         return Colors.red;
       } else {
         return Colors.grey;
@@ -28,14 +28,14 @@ class DatosWidget extends StatelessWidget {
 
     return SizedBox(
       height: display.height,
-      width: display.width * 0.4,
+      width: display.width * 0.3,
       // color: Colors.blue,
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-              height: display.height * 0.65,
-              width: display.width * 0.4,
+              height: display.height * 0.55,
+              width: display.width * 0.3,
               // color: Colors.red,
               child: datos.getListEntradas(numWidget).isEmpty
                   ? const Center(
@@ -60,8 +60,8 @@ class DatosWidget extends StatelessWidget {
                         );
                       })),
           Container(
-            height: display.height * 0.15,
-            width: display.width * 0.4,
+            height: display.height * 0.25,
+            width: display.width * 0.3,
             color: Colors.white,
             child: Column(
               children: [
@@ -70,7 +70,7 @@ class DatosWidget extends StatelessWidget {
                   children: [
                     Container(
                       margin: customPadding,
-                      child: Text(datos.getArchivo(numWidget)),
+                      child: Text(numWidget == 1?datos.tipoArchivo1:datos.tipoArchivo2),
                     ),
                     Padding(
                       padding: customPadding,
