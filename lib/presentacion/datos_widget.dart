@@ -15,7 +15,7 @@ class DatosWidget extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final display = MediaQuery.of(context).size;
-    final datos = Provider.of<Datos>(context);
+    final datos = Provider.of<DatosProvider>(context);
     MaterialColor getColor(Filtro encontrado) {
       if (encontrado == Filtro.correcto) {
         return Colors.green;

@@ -1,5 +1,5 @@
 import 'package:comprobador_flutter/common.dart';
-import 'package:comprobador_flutter/presentacion/configuracion_modelos.dart';
+import 'package:comprobador_flutter/presentacion/configuracion_modelos_screen.dart';
 import 'package:comprobador_flutter/providers/datos_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
@@ -12,7 +12,7 @@ class HomeScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final display = MediaQuery.of(context).size;
-    final datos = Provider.of<Datos>(context);
+    final datos = Provider.of<DatosProvider>(context);
     return Scaffold(
       appBar: AppBar(title: const Text('Comparador de archivos')),
       drawer: Drawer(
@@ -32,7 +32,7 @@ class HomeScreen extends StatelessWidget {
               leading: IconButton(
                 icon: const Icon(Icons.architecture_outlined),
                 onPressed: () => Navigator.of(context)
-                    .pushNamed(ConfiguracionModelos.routeName),
+                    .pushNamed(ConfiguracionModelosScreen.routeName),
               ),
             ),
             ListTile(
@@ -40,7 +40,7 @@ class HomeScreen extends StatelessWidget {
                 leading: IconButton(
                   icon: const Icon(Icons.architecture_outlined),
                   onPressed: () => Navigator.of(context)
-                      .pushNamed(ConfiguracionModelos.routeName),
+                      .pushNamed(ConfiguracionModelosScreen.routeName),
                 )),
             ListTile(
               title: const Text('Carpeta de destino del archivo excel'),

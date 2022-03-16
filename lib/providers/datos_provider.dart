@@ -13,7 +13,7 @@ import 'package:flutter/foundation.dart';
 import '../common.dart';
 import '../excel_extractor.dart';
 
-class Datos extends ChangeNotifier {
+class DatosProvider extends ChangeNotifier {
   File _path1 = File('');
   File _path2 = File('');
 
@@ -225,7 +225,7 @@ class Datos extends ChangeNotifier {
       customSnack('No hay datos cargados', context);
     } else {
       ExportarExcel.crearExcel(_listaEntradas1Filtrado, _listaEntradas2Filtrado,
-          tipoArchivo1, tipoArchivo2, pathExcelExport);
+          tipoArchivo1, tipoArchivo2, pathExcelExport,filtroDatos, context);
       customSnack('Excel creado en: $pathExcelExport', context);
     }
   }

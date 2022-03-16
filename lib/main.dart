@@ -1,8 +1,9 @@
 
 
-import 'package:comprobador_flutter/presentacion/configuracion_modelos.dart';
+import 'package:comprobador_flutter/presentacion/configuracion_modelos_screen.dart';
 import 'package:comprobador_flutter/providers/datos_provider.dart';
 import 'package:comprobador_flutter/presentacion/home_screen.dart';
+import 'package:comprobador_flutter/providers/modelo_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
@@ -10,7 +11,8 @@ void main() {
   
   runApp(MultiProvider(
     providers: [
-      ChangeNotifierProvider(create: (ctx) => Datos()),
+      ChangeNotifierProvider(create: (ctx) => DatosProvider()),
+      ChangeNotifierProvider(create: (ctx)=>ModeloProvider())
     ],
     child: const MyApp(),
   ));
@@ -31,7 +33,7 @@ class MyApp extends StatelessWidget {
       ),
       home: const HomeScreen(),
       routes: {
-        ConfiguracionModelos.routeName: (ctx)=>  const ConfiguracionModelos(),
+        ConfiguracionModelosScreen.routeName: (ctx)=>  const ConfiguracionModelosScreen(),
       },
     );
   }

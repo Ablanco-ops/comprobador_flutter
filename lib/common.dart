@@ -6,8 +6,7 @@ double toPrecision(int fractionDigits, double numero) {
 
 enum Filtro {todo, noEncontrado, correcto, incorrecto }
 enum TipoDatos { pdf, xlsx }
-
-
+enum CamposModelo{nombre,primeraFila,idColumna,codProductoColumna,codProducto,cantidadColumna,sheet,fecha,comprobante}
 
 const customPadding = EdgeInsets.all(8);
 
