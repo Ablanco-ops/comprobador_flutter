@@ -3,15 +3,15 @@ part 'modelo_datos.g.dart';
 
 @JsonSerializable()
 class ModeloDatos {
-  final String nombre;
-  final int primeraFila;
-  final String idColumna;
-  final String? codProductoColumna;
-  final String? codProducto;
-  final String cantidadColumna;
-  final String sheet;
-  final String fecha;
-  final Map<String, String> comprobante;
+   String nombre;
+   int primeraFila;
+   String idColumna;
+   String? codProductoColumna;
+   String? codProducto;
+   String cantidadColumna;
+   String sheet;
+   String fecha;
+   Map<String, String> comprobante;
   ModeloDatos({
     required this.nombre,
     required this.primeraFila,

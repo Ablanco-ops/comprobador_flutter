@@ -1,8 +1,11 @@
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
+
 import 'package:comprobador_flutter/almacen_datos.dart';
 import 'package:comprobador_flutter/common.dart';
 import 'package:comprobador_flutter/providers/modelo_provider.dart';
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
+
+import 'modelo_edit_tile.dart';
 
 class ConfiguracionModelosScreen extends StatelessWidget {
   const ConfiguracionModelosScreen({Key? key}) : super(key: key);
@@ -26,65 +29,66 @@ class ConfiguracionModelosScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                width: display.width * 0.3,
-                height: display.height * 0.8,
-                child: ListView.builder(
-                    itemCount: listaModelos.length,
-                    itemBuilder: (BuildContext context, int index) {
-                      return Container(
-                        margin: const EdgeInsets.only(bottom: 5),
-                        child: ListTile(
-                          onTap: (() =>
-                              provider.setModelo(listaModelos[index])),
-                          shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(5)),
-                          tileColor: Colors.teal,
-                          textColor: Colors.white,
-                          title: Text(listaModelos[index].nombre),
-                          trailing: Container(
-                            width: display.width * 0.1,
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                IconButton(
-                                  icon: const Icon(Icons.edit),
-                                  onPressed: () {},
+                width: display.width*0.3,
+                child: Column(
+                  children: [
+                    Expanded(
+                      // height: display.height * 0.6,
+                      child: ListView.builder(
+                          itemCount: listaModelos.length,
+                          itemBuilder: (BuildContext context, int index) {
+                            return Container(
+                              margin: const EdgeInsets.only(bottom: 5),
+                              child: ListTile(
+                                onTap: (() =>
+                                    provider.setModelo(listaModelos[index])),
+                                shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(5)),
+                                tileColor: Colors.teal,
+                                textColor: Colors.white,
+                                title: Text(listaModelos[index].nombre),
+                                trailing: SizedBox(
+                                  width: display.width * 0.1,
+                                  child: IconButton(
+                                    icon: const Icon(Icons.delete),
+                                    onPressed: ()=>provider.eliminarModelo(listaModelos[index]),
+                                  ),
                                 ),
-                                IconButton(
-                                  icon: const Icon(Icons.delete),
-                                  onPressed: () {},
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      );
-                    }),
+                              ),
+                            );
+                          }),
+                    ),
+                    Container(width: display.width*0.3,child: Row(
+                      mainAxisAlignment: MainAxisAlignment.end,
+                      children: [
+                        IconButton(onPressed: provider.nuevoModelo, icon: const Icon(Icons.add),color: Theme.of(context).primaryColor,),
+                        IconButton(onPressed: (){}, icon: const Icon(Icons.save),color: Theme.of(context).primaryColor)
+                      ],
+                    )),
+                    
+                  ],
+                ),
               ),
               SizedBox(
-                width: display.width * 0.3,
+                width: display.width * 0.4,
                 height: display.height * 0.8,
                 child: Column(
                   children: [
                     Card(
                       child: SizedBox(
-                        width: display.width * 0.3,
-                        height: display.height * 0.5,
+                        // width: display.width * 0.3,
+                        // height: display.height * 0.5,
                         child: Column(
-                          children: [
-                            ListTile(
-                              title: Text('Nombre'),
-                              trailing:
-                                  Text(provider.modeloDatos?.nombre ?? ''),
-                              leading: IconButton(icon: Icon(Icons.edit)),
-                              onTap: ()=>provider.edtiModelo(CamposModelo.nombre, valor),
-                            ),
-                            ListTile(title: Text('Primera fila')),
-                            ListTile(title: Text('Columna identificador')),
-                            ListTile(title: Text('Columna código de producto')),
-                            ListTile(title: Text('Código de producto')),
-                            ListTile(title: Text('Columna cantidad')),
-                            ListTile(title: Text('Nombre de la hoja')),
+                          children: const [
+                            ModeloEditTile(titulo: 'Nombre',campo: CamposModelo.nombre),
+                            ModeloEditTile(titulo: 'Primera Fila',campo: CamposModelo.primeraFila),
+                            ModeloEditTile(titulo: 'Columna Id',campo: CamposModelo.idColumna),
+                            ModeloEditTile(titulo: 'Columna Cod Producto',campo: CamposModelo.codProductoColumna),
+                            ModeloEditTile(titulo: 'Columna Fecha',campo: CamposModelo.fecha),
+                            ModeloEditTile(titulo: 'Cod Producto',campo: CamposModelo.codProducto),
+                            ModeloEditTile(titulo: 'Hoja Excel',campo: CamposModelo.sheet),
+                            ModeloEditTile(titulo: 'Comprobante',campo: CamposModelo.comprobante),
+                            
                           ],
                         ),
                       ),
@@ -99,3 +103,6 @@ class ConfiguracionModelosScreen extends StatelessWidget {
     );
   }
 }
+
+
+
