@@ -50,7 +50,7 @@ class DatosWidget extends StatelessWidget {
                           tileColor: getColor(datos
                               .getListEntradas(numWidget)[index]
                               .encontrado),
-                          title: Text(datos.getId(numWidget, index)) ,
+                          title: Text(datos.getId(numWidget, index)),
                           trailing: Text(datos
                               .getListEntradas(numWidget)[index]
                               .cantidad
@@ -70,12 +70,17 @@ class DatosWidget extends StatelessWidget {
                   children: [
                     Container(
                       margin: customPadding,
-                      child: Text(numWidget == 1?datos.tipoArchivo1:datos.tipoArchivo2),
+                      child: Text(numWidget == 1
+                          ? datos.tipoArchivo1
+                          : datos.tipoArchivo2),
                     ),
                     Padding(
                       padding: customPadding,
                       child: ElevatedButton(
-                          onPressed: () => datos.seleccionarArchivo(numWidget, context),
+                          onPressed: () {
+                            datos.refrescarListas(context);
+                            datos.seleccionarArchivo(numWidget, context);
+                          },
                           child: const Text('Seleccionar Archivo')),
                     )
                   ],

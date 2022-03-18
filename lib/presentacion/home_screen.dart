@@ -13,6 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final display = MediaQuery.of(context).size;
     final datos = Provider.of<DatosProvider>(context);
+    
     return Scaffold(
       appBar: AppBar(title: const Text('Comparador de archivos')),
       drawer: Drawer(
@@ -104,7 +105,9 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                   Container(
-                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(10), border: Border.all(color: Colors.greenAccent)),
+                    decoration: BoxDecoration(
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.greenAccent)),
                     height: display.height * 0.3,
                     width: display.width * 0.2,
                     child: Column(children: [
@@ -131,7 +134,7 @@ class HomeScreen extends StatelessWidget {
                     height: display.height * 0.1,
                   ),
                   ElevatedButton(
-                    style: ElevatedButton.styleFrom(primary: Colors.red),
+                      style: ElevatedButton.styleFrom(primary: Colors.red),
                       onPressed: () => datos.exportar(context),
                       child: const Text('Exportar excel'))
                 ],

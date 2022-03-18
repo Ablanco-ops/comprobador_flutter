@@ -1,5 +1,9 @@
+import 'dart:convert';
+import 'dart:io';
+
 import 'package:comprobador_flutter/almacen_datos.dart';
 import 'package:comprobador_flutter/common.dart';
+import 'package:comprobador_flutter/excepciones.dart';
 import 'package:comprobador_flutter/modelo/modelo_datos.dart';
 import 'package:flutter/cupertino.dart';
 
@@ -89,9 +93,22 @@ class ModeloProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void eliminarModelo(ModeloDatos modelo) {
+  void eliminarModelo(ModeloDatos modelo, BuildContext context) {
+    var result =  customDialog('Confirme la acción',
+        '¿Está seguro de que desea eliminar el modelo?', context);
+    // if (result == 'OK'){}
     listaModelos.remove(modelo);
     modeloDatos = null;
     notifyListeners();
+  }
+
+  Future<void> guardarModelos(BuildContext context) async {
+    final File file = File(getRoot() + 'modelos.json');
+    try {
+      await file.writeAsString(json.encode(listaModelos));
+    } catch (e) {
+      mostrarError(TipoError.escrituraModelos, context);
+    }
+    customSnack('Configuración de modelos guardada en $file', context);
   }
 }

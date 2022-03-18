@@ -1,7 +1,9 @@
+import 'dart:convert';
 import 'dart:io';
 
 import 'package:comprobador_flutter/almacen_datos.dart';
 import 'package:comprobador_flutter/common.dart';
+import 'package:comprobador_flutter/excepciones.dart';
 import 'package:comprobador_flutter/exportar_excel.dart';
 import 'package:comprobador_flutter/modelo/entrada_datos.dart';
 import 'package:comprobador_flutter/pdf_extractor.dart';
@@ -34,6 +36,14 @@ class DatosProvider extends ChangeNotifier {
 
   String pathExcelExport = '';
 
+  void refrescarListas(BuildContext context) async {
+    try {
+    listaModelos = await jsonDecode(getRoot() + 'modelos.json');
+    } catch (e) {
+      mostrarError(TipoError.lecturaModelos, context);
+    }
+  }
+
   void obtenerDatos(int numWidget, TipoDatos tipoDatos, BuildContext context) {
     File path = numWidget == 1 ? _path1 : _path2;
     List<EntradaDatos> listaEntradas = [];
@@ -47,7 +57,7 @@ class DatosProvider extends ChangeNotifier {
       listaEntradas = extractor.procesarExcel();
       var archivoDatos = listaArchivosDatos.firstWhere((archivo) {
         return archivo.listaModelos
-            .any((modelo) => modelo.nombre == listaEntradas[0].modelo);
+            .any((modelo) => modelo == listaEntradas[0].modelo);
       });
       numWidget == 1
           ? tipoArchivo1 = archivoDatos.nombre
@@ -225,7 +235,7 @@ class DatosProvider extends ChangeNotifier {
       customSnack('No hay datos cargados', context);
     } else {
       ExportarExcel.crearExcel(_listaEntradas1Filtrado, _listaEntradas2Filtrado,
-          tipoArchivo1, tipoArchivo2, pathExcelExport,filtroDatos, context);
+          tipoArchivo1, tipoArchivo2, pathExcelExport, filtroDatos, context);
       customSnack('Excel creado en: $pathExcelExport', context);
     }
   }

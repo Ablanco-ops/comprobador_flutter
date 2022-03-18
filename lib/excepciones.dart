@@ -2,10 +2,12 @@ import 'package:flutter/material.dart';
 
 enum TipoExcepcion { archivoIncorrecto, datosIncorrectos, noEncontrado }
 enum TipoError {
-  lectura,
+  lecturaExcel,
+  lecturaModelos,
   extraerPdf,
   extraerXlsx,
   escrituraExcel,
+  escrituraModelos
 }
 
 void _customAlert(String title, String texto, BuildContext context) {
@@ -41,12 +43,19 @@ void mostrarExcepcion(TipoExcepcion tipoExcepcion, BuildContext context) {
 
 void mostrarError(TipoError tipoError, BuildContext context) {
   switch (tipoError) {
-    case TipoError.lectura:
+    case TipoError.lecturaExcel:
       _customAlert('Error de lectura', 'Error al leer excel', context);
+      break;
+    case TipoError.lecturaModelos:
+      _customAlert('Error de lectura', 'Error al leer el archivo de configuración de modelos', context);
       break;
     case TipoError.escrituraExcel:
       _customAlert('Error de escritura',
-          'Error al guardar el exportar archivo Exccel', context);
+          'Error al exportar a archivo Exccel', context);
+      break;
+    case TipoError.escrituraModelos:
+      _customAlert('Error de escritura',
+          'Error al guardar el archivo de configuración de modelos', context);
       break;
     default:
   }

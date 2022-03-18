@@ -33,7 +33,7 @@ class ExcelExtractor {
       var bytes = _file.readAsBytesSync();
       excel = Excel.decodeBytes(bytes);
     } catch (e) {
-      mostrarError(TipoError.lectura, context);
+      mostrarError(TipoError.lecturaExcel, context);
     }
   }
 
@@ -65,7 +65,9 @@ class ExcelExtractor {
   List<EntradaDatos> leerExcel() {
     List<EntradaDatos> listaEntradas = [];
 
-    for (ModeloDatos modelo in _archivoDatos.listaModelos) {
+    for (String nombreModelo in _archivoDatos.listaModelos) {
+      ModeloDatos modelo =
+          listaModelos.firstWhere((element) => element.nombre == nombreModelo);
       Sheet hoja = excel[modelo.sheet];
 
       String fecha = '';
@@ -110,17 +112,19 @@ class ExcelExtractor {
                 .toString();
           }
           double cantidad = (hoja
-              .cell(CellIndex.indexByString(
-                  modelo.cantidadColumna + i.toString()))
-              .value).toDouble() ;
+                  .cell(CellIndex.indexByString(
+                      modelo.cantidadColumna + i.toString()))
+                  .value)
+              .toDouble();
           // if (kDebugMode) {
           //   print(fecha + '|' + id + '|' + cantidad);
           // }
-          if (listaEntradas.any((element) => element.identificador == id && element.codProducto == codProducto)) {
+          if (listaEntradas.any((element) =>
+              element.identificador == id &&
+              element.codProducto == codProducto)) {
             var entrada = listaEntradas
                 .firstWhere((element) => element.identificador == id);
-            entrada.cantidad =
-                toPrecision(2, entrada.cantidad + cantidad);
+            entrada.cantidad = toPrecision(2, entrada.cantidad + cantidad);
           } else {
             if (codProducto == '') {
               listaEntradas.add(EntradaDatos(

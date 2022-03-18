@@ -12,7 +12,7 @@
 .svn/
 build/
 windows/
-
+configuracion/
 # IntelliJ related
 *.iml
 *.ipr

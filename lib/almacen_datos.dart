@@ -1,6 +1,8 @@
 import 'package:comprobador_flutter/modelo/archivo_datos.dart';
 import 'package:comprobador_flutter/modelo/modelo_datos.dart';
 
+String pathModelos = '';
+
 List<ModeloDatos> listaModelos = [
   ModeloDatos(
       nombre: 'CHEP Datos',
@@ -65,49 +67,16 @@ List<ModeloDatos> listaModelos = [
 ];
 
 List<ArchivoDatos> listaArchivosDatos = [
-  ArchivoDatos(nombre: 'CHEP Factura', listaModelos: [
-    ModeloDatos(
-        nombre: 'CHEP Datos',
-        primeraFila: 19,
-        idColumna: 'R',
-        codProductoColumna: 'B',
-        cantidadColumna: 'M',
-        sheet: 'Priced GTL v2.0',
-        comprobante: {'A18': 'UMI', 'B18': 'Código Producto'},
-        fecha: 'T'),
-  ], listaHojas: {
-    'Priced GTL v2.0'
-  }),
+  ArchivoDatos(
+      nombre: 'CHEP Factura',
+      listaModelos: ['CHEP Datos'],
+      listaHojas: {'Priced GTL v2.0'}),
   ArchivoDatos(
     nombre: 'Chep Envases',
     listaModelos: [
-      ModeloDatos(
-          nombre: 'Chep Palets',
-          primeraFila: 7,
-          idColumna: 'F',
-          codProducto: '00003',
-          cantidadColumna: 'G',
-          sheet: 'SALIDAS PALETS CHEP',
-          comprobante: {'A1': 'Producto', 'B1': '91908 - PALET CHEP 800X1200'},
-          fecha: 'C'),
-      ModeloDatos(
-          nombre: 'Chep Paletinas',
-          primeraFila: 7,
-          idColumna: 'F',
-          codProducto: '00008',
-          cantidadColumna: 'G',
-          sheet: 'SALIDA CHEP - PALETINA',
-          comprobante: {'A1': 'Producto', 'B1': '91927 - PALET CHEP 800X600'},
-          fecha: 'C'),
-      ModeloDatos(
-          nombre: 'Chep Americano',
-          primeraFila: 2,
-          idColumna: 'F',
-          codProducto: '00001',
-          cantidadColumna: 'G',
-          sheet: 'SALIDA CHEP - PALETINA',
-          comprobante: {'A1': 'Año', 'B1': 'Mes'},
-          fecha: 'C'),
+      'Chep Palets',
+      'Chep Paletinas',
+      'Chep Americano',
     ],
     listaHojas: {
       'SALIDAS PALETS CHEP',
@@ -115,37 +84,12 @@ List<ArchivoDatos> listaArchivosDatos = [
       'SALIDA CHEP AMERICANO'
     },
   ),
-  ArchivoDatos(nombre: 'Intrastat Navision', listaModelos: [
-    ModeloDatos(
-        nombre: 'Diarios Intrastat',
-        primeraFila: 4,
-        idColumna: 'C',
-        cantidadColumna: 'Q',
-        sheet: 'Sheet1',
-        fecha: 'B',
-        comprobante: {'A3': 'Tipo', 'B3': 'Fecha'})
-  ], listaHojas: {
-    'Sheet1'
-  }),
-  ArchivoDatos(nombre: 'Intrastat IVA', listaModelos: [
-    ModeloDatos(
-        nombre: 'Excel Clientes',
-        primeraFila: 6,
-        idColumna: 'E',
-        cantidadColumna: 'F',
-        sheet: 'Clientes',
-        fecha: 'D',
-        comprobante: {'B1': 'IVA CLIENTES'}),
-    ModeloDatos(
-        nombre: 'Excel Proveedores',
-        primeraFila: 6,
-        idColumna: 'E',
-        cantidadColumna: 'F',
-        sheet: 'Proveedores',
-        fecha: 'D',
-        comprobante: {'B1': 'IVA PROVEEDORES'})
-  ], listaHojas: {
-    'Clientes',
-    'Proveedores'
-  })
+  ArchivoDatos(
+      nombre: 'Intrastat Navision',
+      listaModelos: ['Diarios Intrastat'],
+      listaHojas: {'Sheet1'}),
+  ArchivoDatos(
+      nombre: 'Intrastat IVA',
+      listaModelos: ['Excel Clientes', 'Excel Proveedores'],
+      listaHojas: {'Clientes', 'Proveedores'})
 ];

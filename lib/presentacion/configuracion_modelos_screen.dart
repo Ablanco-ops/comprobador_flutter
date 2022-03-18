@@ -30,7 +30,7 @@ class ConfiguracionModelosScreen extends StatelessWidget {
             children: [
               SizedBox(
                 width: display.width*0.3,
-                child: Column(
+                child: Row(
                   children: [
                     Expanded(
                       // height: display.height * 0.6,
@@ -44,27 +44,27 @@ class ConfiguracionModelosScreen extends StatelessWidget {
                                     provider.setModelo(listaModelos[index])),
                                 shape: RoundedRectangleBorder(
                                     borderRadius: BorderRadius.circular(5)),
-                                tileColor: Colors.teal,
+                                tileColor: Colors.green,
                                 textColor: Colors.white,
                                 title: Text(listaModelos[index].nombre),
-                                trailing: SizedBox(
-                                  width: display.width * 0.1,
-                                  child: IconButton(
-                                    icon: const Icon(Icons.delete),
-                                    onPressed: ()=>provider.eliminarModelo(listaModelos[index]),
-                                  ),
+                                trailing: IconButton(
+                                  icon: const Icon(Icons.delete, color: Colors.white,),
+                                  onPressed: ()=>provider.eliminarModelo(listaModelos[index],context),
                                 ),
                               ),
                             );
                           }),
                     ),
-                    Container(width: display.width*0.3,child: Row(
-                      mainAxisAlignment: MainAxisAlignment.end,
+                    Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        IconButton(onPressed: provider.nuevoModelo, icon: const Icon(Icons.add),color: Theme.of(context).primaryColor,),
-                        IconButton(onPressed: (){}, icon: const Icon(Icons.save),color: Theme.of(context).primaryColor)
+                        IconButton(onPressed: provider.nuevoModelo, icon: const Icon(Icons.add_circle, size: 36,),color:Colors.green),
+                        const SizedBox(height: 10),
+                        IconButton(onPressed: () => provider.guardarModelos(context), icon: const Icon(Icons.save),color: Colors.amber),
+                        
+                        
                       ],
-                    )),
+                    ),
                     
                   ],
                 ),
