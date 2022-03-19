@@ -101,27 +101,5 @@ class _EditTileState extends State<ModeloEditTile> {
         ),
       ]),
     );
-    // return ListTile(
-    //   title: editando
-    //       ? TextField(
-    //           controller: _controller,
-    //           onSubmitted: (value) {
-    //             provider.validarTexto(widget.campo, value);
-    //           },
-    //         )
-    //       : Center(child: Text(titulo())),
-    //   trailing: IconButton(
-    //       icon: const Icon(Icons.edit),
-    //       onPressed: () {
-    //         setState(() {
-    //           if (editando) {
-    //             provider.validarTexto(widget.campo, _controller.text);
-    //             _controller.clear();
-    //           }
-    //           editando = !editando;
-    //         });
-    //       }),
-    //   leading: Text(widget.titulo),
-    // );
   }
 }

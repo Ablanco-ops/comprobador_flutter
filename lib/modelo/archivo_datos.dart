@@ -2,7 +2,7 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'archivo_datos.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class ArchivoDatos {
   String nombre;
   List<String> listaModelos;

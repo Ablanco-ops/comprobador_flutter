@@ -15,8 +15,20 @@ class ConfiguracionModelosScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final provider = Provider.of<ModeloProvider>(context);
     var display = MediaQuery.of(context).size;
+
     return Scaffold(
       appBar: AppBar(
+        leading: BackButton(onPressed: () async {
+          if (provider.cambios) {
+            bool result = await customDialog(
+                'Confirmar', '¿Desea guardar los cambios?', context);
+            if (result) {
+              provider.guardarModelos(context);
+            }
+          }
+
+          Navigator.pop(context);
+        }),
         title: const Text('Configuración de Modelos de datos'),
       ),
       body: Container(
@@ -29,7 +41,7 @@ class ConfiguracionModelosScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
               SizedBox(
-                width: display.width*0.3,
+                width: display.width * 0.3,
                 child: Row(
                   children: [
                     Expanded(
@@ -48,8 +60,12 @@ class ConfiguracionModelosScreen extends StatelessWidget {
                                 textColor: Colors.white,
                                 title: Text(listaModelos[index].nombre),
                                 trailing: IconButton(
-                                  icon: const Icon(Icons.delete, color: Colors.white,),
-                                  onPressed: ()=>provider.eliminarModelo(listaModelos[index],context),
+                                  icon: const Icon(
+                                    Icons.delete,
+                                    color: Colors.white,
+                                  ),
+                                  onPressed: () => provider.eliminarModelo(
+                                      listaModelos[index], context),
                                 ),
                               ),
                             );
@@ -58,14 +74,23 @@ class ConfiguracionModelosScreen extends StatelessWidget {
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,
                       children: [
-                        IconButton(onPressed: provider.nuevoModelo, icon: const Icon(Icons.add_circle, size: 36,),color:Colors.green),
+                        IconButton(
+                            onPressed: provider.nuevoModelo,
+                            icon: const Icon(
+                              Icons.add_circle,
+                              size: 36,
+                            ),
+                            color: Colors.green),
                         const SizedBox(height: 10),
-                        IconButton(onPressed: () => provider.guardarModelos(context), icon: const Icon(Icons.save),color: Colors.amber),
-                        
-                        
+                        IconButton(
+                            onPressed: () => provider.guardarModelos(context),
+                            icon: const Icon(
+                              Icons.save,
+                              size: 36,
+                            ),
+                            color: Colors.red),
                       ],
                     ),
-                    
                   ],
                 ),
               ),
@@ -80,15 +105,29 @@ class ConfiguracionModelosScreen extends StatelessWidget {
                         // height: display.height * 0.5,
                         child: Column(
                           children: const [
-                            ModeloEditTile(titulo: 'Nombre',campo: CamposModelo.nombre),
-                            ModeloEditTile(titulo: 'Primera Fila',campo: CamposModelo.primeraFila),
-                            ModeloEditTile(titulo: 'Columna Id',campo: CamposModelo.idColumna),
-                            ModeloEditTile(titulo: 'Columna Cod Producto',campo: CamposModelo.codProductoColumna),
-                            ModeloEditTile(titulo: 'Columna Fecha',campo: CamposModelo.fecha),
-                            ModeloEditTile(titulo: 'Cod Producto',campo: CamposModelo.codProducto),
-                            ModeloEditTile(titulo: 'Hoja Excel',campo: CamposModelo.sheet),
-                            ModeloEditTile(titulo: 'Comprobante',campo: CamposModelo.comprobante),
-                            
+                            ModeloEditTile(
+                                titulo: 'Nombre', campo: CamposModelo.nombre),
+                            ModeloEditTile(
+                                titulo: 'Primera Fila',
+                                campo: CamposModelo.primeraFila),
+                            ModeloEditTile(
+                                titulo: 'Columna Id',
+                                campo: CamposModelo.idColumna),
+                            ModeloEditTile(
+                                titulo: 'Columna Cod Producto',
+                                campo: CamposModelo.codProductoColumna),
+                            ModeloEditTile(
+                                titulo: 'Columna Fecha',
+                                campo: CamposModelo.fecha),
+                            ModeloEditTile(
+                                titulo: 'Cod Producto',
+                                campo: CamposModelo.codProducto),
+                            ModeloEditTile(
+                                titulo: 'Hoja Excel',
+                                campo: CamposModelo.sheet),
+                            ModeloEditTile(
+                                titulo: 'Comprobante',
+                                campo: CamposModelo.comprobante),
                           ],
                         ),
                       ),
@@ -103,6 +142,3 @@ class ConfiguracionModelosScreen extends StatelessWidget {
     );
   }
 }
-
-
-

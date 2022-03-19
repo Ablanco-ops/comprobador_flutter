@@ -32,11 +32,11 @@ String getRoot() {
   return path;
 }
 
-void customDialog(String title, String texto, BuildContext context) {
-  showDialog(
+Future<bool> customDialog (String title, String texto, BuildContext context) async{
+  return await showDialog(
       context: context,
-      builder: (BuildContext context) {
-        return AlertDialog(
+      builder: (BuildContext context)=> 
+         AlertDialog(
           title: Text(title),
           content: Text(texto),
           actions: [
@@ -49,6 +49,6 @@ void customDialog(String title, String texto, BuildContext context) {
               child: const Text('No'),
             )
           ],
-        );
-      });
+        )
+      );
 }

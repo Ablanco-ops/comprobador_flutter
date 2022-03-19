@@ -9,13 +9,14 @@ import 'package:flutter/cupertino.dart';
 
 class ModeloProvider extends ChangeNotifier {
   ModeloDatos? modeloDatos;
+  bool cambios = false;
 
   void setModelo(ModeloDatos modelo) {
     modeloDatos = modelo;
     notifyListeners();
   }
 
-  void edtiModelo(CamposModelo campo, String valor) {
+  void _edtiModelo(CamposModelo campo, String valor) {
     switch (campo) {
       case CamposModelo.cantidadColumna:
         modeloDatos!.cantidadColumna = valor;
@@ -71,7 +72,8 @@ class ModeloProvider extends ChangeNotifier {
         pattern = RegExp(r'^[A-Z]$');
     }
     if (pattern.hasMatch(valor)) {
-      edtiModelo(campo, valor);
+      _edtiModelo(campo, valor);
+      cambios = true;
       return true;
     } else {
       return false;
@@ -90,16 +92,19 @@ class ModeloProvider extends ChangeNotifier {
     modeloDatos = listaModelos.firstWhere(
       (element) => element.nombre == 'Nuevo Modelo',
     );
+    cambios = true;
     notifyListeners();
   }
 
-  void eliminarModelo(ModeloDatos modelo, BuildContext context) {
-    var result =  customDialog('Confirme la acción',
+  void eliminarModelo(ModeloDatos modelo, BuildContext context) async {
+    bool result = await customDialog('Confirme la acción',
         '¿Está seguro de que desea eliminar el modelo?', context);
-    // if (result == 'OK'){}
-    listaModelos.remove(modelo);
-    modeloDatos = null;
-    notifyListeners();
+    if (result) {
+      listaModelos.remove(modelo);
+      modeloDatos = null;
+      cambios = true;
+      notifyListeners();
+    }
   }
 
   Future<void> guardarModelos(BuildContext context) async {

@@ -13,6 +13,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final display = MediaQuery.of(context).size;
     final datos = Provider.of<DatosProvider>(context);
+    String textoBusqueda = '';
     
     return Scaffold(
       appBar: AppBar(title: const Text('Comparador de archivos')),
@@ -82,15 +83,15 @@ class HomeScreen extends StatelessWidget {
                         elevation: 10,
                         borderRadius: BorderRadius.circular(10),
                         child: Container(
-                          width: display.width * 0.10,
+                          // width: display.width * 0.10,
                           padding: customPadding,
                           decoration: BoxDecoration(
-                              color: Theme.of(context).primaryColorLight,
+                              color: Theme.of(context).primaryColor,
                               borderRadius: BorderRadius.circular(10)),
                           child: Center(
                             child: PopupMenuButton<Filtro>(
                                 child:
-                                    Text(datos.filtroName(datos.filtroDatos)),
+                                    Text(datos.filtroName(datos.filtroDatos),style: const TextStyle(color: Colors.white)),
                                 onSelected: (value) =>
                                     datos.filtrarDatos(value),
                                 itemBuilder: (BuildContext context) => Filtro
@@ -102,6 +103,14 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ),
+                      // Container(
+                      //   width: display.width*0.3,
+                      //   child: Row(
+                      //     children: [TextField(onChanged: ((value) => textoBusqueda = value)),
+                      //       IconButton(onPressed: ()=>datos.buscarEntradas(textoBusqueda),  icon: Icon(Icons.search)),
+                      //     ],
+                      //   ),
+                      // )
                     ],
                   ),
                   Container(

@@ -6,6 +6,7 @@ import 'package:comprobador_flutter/common.dart';
 import 'package:comprobador_flutter/excepciones.dart';
 import 'package:comprobador_flutter/exportar_excel.dart';
 import 'package:comprobador_flutter/modelo/entrada_datos.dart';
+import 'package:comprobador_flutter/modelo/modelo_datos.dart';
 import 'package:comprobador_flutter/pdf_extractor.dart';
 import 'package:comprobador_flutter/preferences.dart';
 import 'package:file_picker/file_picker.dart';
@@ -37,8 +38,12 @@ class DatosProvider extends ChangeNotifier {
   String pathExcelExport = '';
 
   void refrescarListas(BuildContext context) async {
+    final File file = File(getRoot() + 'modelos.json');
+
     try {
-    listaModelos = await jsonDecode(getRoot() + 'modelos.json');
+      List<dynamic> lista = jsonDecode(await file.readAsString());
+      listaModelos = (lista.map((e) => ModeloDatos.fromJson(e))).toList();
+      print(getRoot() + 'modelos.json');
     } catch (e) {
       mostrarError(TipoError.lecturaModelos, context);
     }
@@ -63,11 +68,6 @@ class DatosProvider extends ChangeNotifier {
           ? tipoArchivo1 = archivoDatos.nombre
           : tipoArchivo2 = archivoDatos.nombre;
     }
-    for (EntradaDatos entrada in listaEntradas) {
-      if (kDebugMode) {
-        print(entrada.toString());
-      }
-    }
     listaEntradas.sort((a, b) => a.identificador.compareTo(b.identificador));
     if (numWidget == 1) {
       _listaEntradas1 = listaEntradas;
@@ -79,20 +79,25 @@ class DatosProvider extends ChangeNotifier {
     notifyListeners();
   }
 
+  void buscarEntradas(String busqueda) {
+    _listaEntradas1Filtrado
+        .retainWhere((element) => element.identificador.contains(busqueda));
+    _listaEntradas2Filtrado
+        .retainWhere((element) => element.identificador.contains(busqueda));
+  }
+
   void filtrarDatos(Filtro filtro) {
     filtroDatos = filtro;
-    _listaEntradas1Filtrado = _filtrarEntradas(filtro, _listaEntradas1);
-    _listaEntradas2Filtrado = _filtrarEntradas(filtro, _listaEntradas2);
+    _listaEntradas1Filtrado = _filtrarEntradas(_listaEntradas1);
+    _listaEntradas2Filtrado = _filtrarEntradas(_listaEntradas2);
     notifyListeners();
   }
 
-  List<EntradaDatos> _filtrarEntradas(Filtro filtro, List<EntradaDatos> lista) {
+  List<EntradaDatos> _filtrarEntradas(List<EntradaDatos> lista) {
     List<EntradaDatos> listaFiltrada = [];
     listaFiltrada.addAll(lista);
-    if (kDebugMode) {
-      print('${_listaEntradas1.length} - ${_listaEntradas2.length}');
-    }
-    switch (filtro) {
+
+    switch (filtroDatos) {
       case Filtro.noEncontrado:
         listaFiltrada.retainWhere(
             (element) => element.encontrado == Filtro.noEncontrado);
@@ -107,9 +112,7 @@ class DatosProvider extends ChangeNotifier {
         break;
       default:
     }
-    if (kDebugMode) {
-      print(listaFiltrada.length);
-    }
+
     return listaFiltrada;
   }
 
@@ -151,17 +154,6 @@ class DatosProvider extends ChangeNotifier {
     }
     notifyListeners();
   }
-
-  // void setArchivo(int numWidget, ArchivoDatos archivo) {
-  //   if (numWidget == 1) {
-  //     _archivo1 = archivo;
-  //     tipoArchivo1 = archivo.nombre;
-  //   } else {
-  //     _archivo2 = archivo;
-  //     tipoArchivo2 = archivo.nombre;
-  //   }
-  //   notifyListeners();
-  // }
 
   List<EntradaDatos> getListEntradas(int numWidget) {
     if (numWidget == 1) {

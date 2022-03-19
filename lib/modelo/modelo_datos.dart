@@ -1,7 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'modelo_datos.g.dart';
 
-@JsonSerializable()
+@JsonSerializable(explicitToJson: true)
 class ModeloDatos {
    String nombre;
    int primeraFila;

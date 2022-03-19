@@ -145,7 +145,7 @@ class ExcelExtractor {
       }
     }
     if (kDebugMode) {
-      print(listaEntradas);
+      print('Entradas ${listaEntradas.length}');
     }
     return listaEntradas;
   }
