@@ -1,4 +1,5 @@
 import 'package:comprobador_flutter/common.dart';
+import 'package:comprobador_flutter/presentacion/configuracion_archivos_screen.dart';
 import 'package:comprobador_flutter/presentacion/configuracion_modelos_screen.dart';
 import 'package:comprobador_flutter/providers/datos_provider.dart';
 import 'package:flutter/material.dart';
@@ -14,7 +15,7 @@ class HomeScreen extends StatelessWidget {
     final display = MediaQuery.of(context).size;
     final datos = Provider.of<DatosProvider>(context);
     String textoBusqueda = '';
-    
+
     return Scaffold(
       appBar: AppBar(title: const Text('Comparador de archivos')),
       drawer: Drawer(
@@ -34,7 +35,7 @@ class HomeScreen extends StatelessWidget {
               leading: IconButton(
                 icon: const Icon(Icons.architecture_outlined),
                 onPressed: () => Navigator.of(context)
-                    .pushNamed(ConfiguracionModelosScreen.routeName),
+                    .pushNamed(ConfiguracionArchivosScreen.routeName),
               ),
             ),
             ListTile(
@@ -80,18 +81,19 @@ class HomeScreen extends StatelessWidget {
                       const Text('Filtro: '),
                       const SizedBox(width: 5),
                       Material(
-                        elevation: 10,
-                        borderRadius: BorderRadius.circular(10),
+                        elevation: 5,
+                        borderRadius: BorderRadius.circular(5),
                         child: Container(
                           // width: display.width * 0.10,
                           padding: customPadding,
                           decoration: BoxDecoration(
                               color: Theme.of(context).primaryColor,
-                              borderRadius: BorderRadius.circular(10)),
+                              borderRadius: BorderRadius.circular(5)),
                           child: Center(
                             child: PopupMenuButton<Filtro>(
-                                child:
-                                    Text(datos.filtroName(datos.filtroDatos),style: const TextStyle(color: Colors.white)),
+                                child: Text(datos.filtroName(datos.filtroDatos),
+                                    style:
+                                        const TextStyle(color: Colors.white)),
                                 onSelected: (value) =>
                                     datos.filtrarDatos(value),
                                 itemBuilder: (BuildContext context) => Filtro
@@ -103,41 +105,49 @@ class HomeScreen extends StatelessWidget {
                           ),
                         ),
                       ),
-                      // Container(
-                      //   width: display.width*0.3,
-                      //   child: Row(
-                      //     children: [TextField(onChanged: ((value) => textoBusqueda = value)),
-                      //       IconButton(onPressed: ()=>datos.buscarEntradas(textoBusqueda),  icon: Icon(Icons.search)),
-                      //     ],
-                      //   ),
-                      // )
                     ],
                   ),
                   Container(
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.greenAccent)),
-                    height: display.height * 0.3,
+                    decoration: BoxDecoration(borderRadius: BorderRadius.circular(20),color: Theme.of(context).primaryColorLight),
+                    child: Row(
+                      children: [
+                        SizedBox(
+                            width: display.width * 0.15,
+                            child: TextField(
+                              decoration: const InputDecoration(border: InputBorder.none, contentPadding: EdgeInsets.only(left: 16), hintText: 'Busqueda'),
+                                onChanged: ((value) => textoBusqueda = value))),
+                        IconButton(
+                            onPressed: () => datos.buscarEntradas(textoBusqueda),
+                            icon: const Icon(Icons.search)),
+                      ],
+                    ),
+                  ),
+                  SizedBox(
                     width: display.width * 0.2,
-                    child: Column(children: [
-                      // ListTile(
-                      //   title: const Text('Entradas'),
-                      //   trailing: Text(
-                      //       '${datos.getListEntradas(1).length} - ${datos.getListEntradas(2).length}'),
-                      // ),
-                      ListTile(
-                        title: const Text('No Encontrados'),
-                        trailing: Text(datos.noEncontrados.toString()),
-                      ),
-                      ListTile(
-                        title: const Text('Correctos'),
-                        trailing: Text(datos.correctos.toString()),
-                      ),
-                      ListTile(
-                        title: const Text('incorrectos'),
-                        trailing: Text(datos.incorrectos.toString()),
-                      ),
-                    ]),
+                    child: Card(
+                      shape: RoundedRectangleBorder(
+                          side: const BorderSide(color: Colors.green),
+                          borderRadius: BorderRadius.circular(10)),
+                      child: Column(children: [
+                        // ListTile(
+                        //   title: const Text('Entradas'),
+                        //   trailing: Text(
+                        //       '${datos.getListEntradas(1).length} - ${datos.getListEntradas(2).length}'),
+                        // ),
+                        ListTile(
+                          title: const Text('No Encontrados'),
+                          trailing: Text(datos.noEncontrados.toString()),
+                        ),
+                        ListTile(
+                          title: const Text('Correctos'),
+                          trailing: Text(datos.correctos.toString()),
+                        ),
+                        ListTile(
+                          title: const Text('incorrectos'),
+                          trailing: Text(datos.incorrectos.toString()),
+                        ),
+                      ]),
+                    ),
                   ),
                   SizedBox(
                     height: display.height * 0.1,

@@ -46,30 +46,33 @@ class ConfiguracionModelosScreen extends StatelessWidget {
                   children: [
                     Expanded(
                       // height: display.height * 0.6,
-                      child: ListView.builder(
-                          itemCount: listaModelos.length,
-                          itemBuilder: (BuildContext context, int index) {
-                            return Container(
-                              margin: const EdgeInsets.only(bottom: 5),
-                              child: ListTile(
-                                onTap: (() =>
-                                    provider.setModelo(listaModelos[index])),
-                                shape: RoundedRectangleBorder(
-                                    borderRadius: BorderRadius.circular(5)),
-                                tileColor: Colors.green,
-                                textColor: Colors.white,
-                                title: Text(listaModelos[index].nombre),
-                                trailing: IconButton(
-                                  icon: const Icon(
-                                    Icons.delete,
-                                    color: Colors.white,
+                      child: Card(
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        child: ListView.builder(
+                            itemCount: listaModelos.length,
+                            itemBuilder: (BuildContext context, int index) {
+                              return Container(
+                                margin: const EdgeInsets.only(bottom: 5),
+                                child: ListTile(
+                                  onTap: (() =>
+                                      provider.setModelo(listaModelos[index])),
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(5)),
+                                  tileColor: Colors.green,
+                                  textColor: Colors.white,
+                                  title: Text(listaModelos[index].nombre),
+                                  trailing: IconButton(
+                                    icon: const Icon(
+                                      Icons.delete,
+                                      color: Colors.white,
+                                    ),
+                                    onPressed: () => provider.eliminarModelo(
+                                        listaModelos[index], context),
                                   ),
-                                  onPressed: () => provider.eliminarModelo(
-                                      listaModelos[index], context),
                                 ),
-                              ),
-                            );
-                          }),
+                              );
+                            }),
+                      ),
                     ),
                     Column(
                       mainAxisAlignment: MainAxisAlignment.start,

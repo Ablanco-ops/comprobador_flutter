@@ -80,10 +80,12 @@ class DatosProvider extends ChangeNotifier {
   }
 
   void buscarEntradas(String busqueda) {
+      filtrarDatos(filtroDatos);
     _listaEntradas1Filtrado
         .retainWhere((element) => element.identificador.contains(busqueda));
     _listaEntradas2Filtrado
         .retainWhere((element) => element.identificador.contains(busqueda));
+    notifyListeners();
   }
 
   void filtrarDatos(Filtro filtro) {
@@ -131,7 +133,7 @@ class DatosProvider extends ChangeNotifier {
 
   Future<void> seleccionarArchivo(int numWidget, BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx', 'pdf']);
+        .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx']);
     if (result != null) {
       numWidget == 1
           ? _path1 = File(result.files.single.path!)

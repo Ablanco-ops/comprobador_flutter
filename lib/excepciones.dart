@@ -4,10 +4,12 @@ enum TipoExcepcion { archivoIncorrecto, datosIncorrectos, noEncontrado }
 enum TipoError {
   lecturaExcel,
   lecturaModelos,
+  lecturaArchivos,
   extraerPdf,
   extraerXlsx,
   escrituraExcel,
-  escrituraModelos
+  escrituraModelos,
+  escrituraArchivos
 }
 
 void _customAlert(String title, String texto, BuildContext context) {
@@ -49,6 +51,9 @@ void mostrarError(TipoError tipoError, BuildContext context) {
     case TipoError.lecturaModelos:
       _customAlert('Error de lectura', 'Error al leer el archivo de configuración de modelos', context);
       break;
+      case TipoError.lecturaArchivos:
+      _customAlert('Error de lectura', 'Error al leer el archivo de configuración de archivos', context);
+      break;
     case TipoError.escrituraExcel:
       _customAlert('Error de escritura',
           'Error al exportar a archivo Exccel', context);
@@ -56,6 +61,10 @@ void mostrarError(TipoError tipoError, BuildContext context) {
     case TipoError.escrituraModelos:
       _customAlert('Error de escritura',
           'Error al guardar el archivo de configuración de modelos', context);
+      break;
+      case TipoError.escrituraArchivos:
+      _customAlert('Error de escritura',
+          'Error al guardar el archivo de configuración de Archivos', context);
       break;
     default:
   }

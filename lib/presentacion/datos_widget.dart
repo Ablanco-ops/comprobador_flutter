@@ -31,13 +31,14 @@ class DatosWidget extends StatelessWidget {
       width: display.width * 0.3,
       // color: Colors.blue,
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
-              height: display.height * 0.55,
+              height: display.height * 0.60,
               width: display.width * 0.3,
               // color: Colors.red,
-              child: datos.getListEntradas(numWidget).isEmpty
+              child: Card(
+                child: datos.getListEntradas(numWidget).isEmpty
                   ? const Center(
                       child: Text('Elige tipo de archivo y localización'))
                   : ListView.builder(
@@ -46,50 +47,56 @@ class DatosWidget extends StatelessWidget {
                       shrinkWrap: true,
                       itemCount: datos.getListEntradas(numWidget).length,
                       itemBuilder: (BuildContext context, int index) {
-                        return ListTile(
-                          tileColor: getColor(datos
-                              .getListEntradas(numWidget)[index]
-                              .encontrado),
-                          title: Text(datos.getId(numWidget, index)),
-                          trailing: Text(datos
-                              .getListEntradas(numWidget)[index]
-                              .cantidad
-                              .toString()),
-                          subtitle: Text(
-                              datos.getListEntradas(numWidget)[index].fecha),
+                        return Padding(
+                          padding: const EdgeInsets.only(bottom: 5),
+                          child: ListTile(
+                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
+                            tileColor: getColor(datos
+                                .getListEntradas(numWidget)[index]
+                                .encontrado),
+                            title: Text(datos.getId(numWidget, index)),
+                            trailing: Text(datos
+                                .getListEntradas(numWidget)[index]
+                                .cantidad
+                                .toString()),
+                            subtitle: Text(
+                                datos.getListEntradas(numWidget)[index].fecha),
+                          ),
                         );
-                      })),
-          Container(
+                      }))),
+          SizedBox(
             height: display.height * 0.25,
             width: display.width * 0.3,
-            color: Colors.white,
-            child: Column(
-              children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Container(
-                      margin: customPadding,
-                      child: Text(numWidget == 1
-                          ? datos.tipoArchivo1
-                          : datos.tipoArchivo2),
-                    ),
-                    Padding(
-                      padding: customPadding,
-                      child: ElevatedButton(
-                          onPressed: () {
-                            datos.refrescarListas(context);
-                            datos.seleccionarArchivo(numWidget, context);
-                          },
-                          child: const Text('Seleccionar Archivo')),
-                    )
-                  ],
-                ),
-                Padding(
-                  padding: customPadding,
-                  child: Text(datos.getPath(numWidget).path),
-                )
-              ],
+            child: Card(
+              shape: RoundedRectangleBorder(side: const BorderSide(color: Colors.green) ,borderRadius: BorderRadius.circular(10)),
+              child: Column(
+                children: [
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                    children: [
+                      Container(
+                        margin: customPadding,
+                        child: Text(numWidget == 1
+                            ? datos.tipoArchivo1
+                            : datos.tipoArchivo2),
+                      ),
+                      Padding(
+                        padding: customPadding,
+                        child: ElevatedButton(
+                            onPressed: () {
+                              datos.refrescarListas(context);
+                              datos.seleccionarArchivo(numWidget, context);
+                            },
+                            child: const Text('Seleccionar Archivo')),
+                      )
+                    ],
+                  ),
+                  Padding(
+                    padding: customPadding,
+                    child: Text(datos.getPath(numWidget).path),
+                  )
+                ],
+              ),
             ),
           )
         ],
