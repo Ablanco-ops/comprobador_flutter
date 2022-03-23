@@ -1,15 +1,25 @@
-# comprobador_flutter
+# Punteador de Archivos
 
-A new Flutter project.
+La finalidad de este programa es comparar las entradas de datos de dos archivos excel
+para comprobar si tienen los mismos valores en ambos archivos.
 
-## Getting Started
+## Uso
 
-This project is a starting point for a Flutter application.
+La aplicación se puede configurar desde el menú de configuración o directamente 
+desde los archivos 'modelos.json' y 'archivos.json' que se encuentran en la carpeta 
+raiz de la aplicación.
 
-A few resources to get you started if this is your first Flutter project:
+Cada modelo establece donde buscar en la hoja excel el identificador de la entrada,un código
+adicional opcional, nombre de la hoja, cantidad a comparar, fecha y contenido de una o mas celdas 
+para comprobar la validez de la hoja. Los archivos agrupan varios modelos.
 
-- [Lab: Write your first Flutter app](https://flutter.dev/docs/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://flutter.dev/docs/cookbook)
+Al seleccionar un archivo en la app busca si se corresponde con alguno los archivos configurados, 
+una vez introducidos dos archivosse cruzan los datos para comprobar la correspondencia y el resultado 
+se puede filtrar y exportar en un xlsx.
+
+## Construido con 
+
+Flutter 2.10.3
 
 For help getting started with Flutter, view our
 [online documentation](https://flutter.dev/docs), which offers tutorials,
