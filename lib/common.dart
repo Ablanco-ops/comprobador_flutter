@@ -32,23 +32,24 @@ String getRoot() {
   return path;
 }
 
-Future<bool> customDialog (String title, String texto, BuildContext context) async{
+Future<bool> customDialog(
+    String title, String texto, BuildContext context) async {
   return await showDialog(
       context: context,
-      builder: (BuildContext context)=> 
-         AlertDialog(
-          title: Text(title),
-          content: Text(texto),
-          actions: [
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, true),
-              child: const Text('Si'),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(context, false),
-              child: const Text('No'),
-            )
-          ],
-        )
-      );
+      builder: (BuildContext context) => AlertDialog(
+            title: Text(title),
+            content: Text(texto),
+            actions: [
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, true),
+                child: const Text('Si'),
+              ),
+              ElevatedButton(
+                onPressed: () => Navigator.pop(context, false),
+                child: const Text('No'),
+              )
+            ],
+          ));
 }
+
+

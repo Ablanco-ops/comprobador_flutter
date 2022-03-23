@@ -1,7 +1,16 @@
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:comprobador_flutter/excepciones.dart';
 import 'package:comprobador_flutter/modelo/archivo_datos.dart';
 import 'package:comprobador_flutter/modelo/modelo_datos.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
+
+import 'common.dart';
 
 String pathModelos = '';
+bool _iniciado = false;
 
 List<ModeloDatos> listaModelos = [
   ModeloDatos(
@@ -66,7 +75,7 @@ List<ModeloDatos> listaModelos = [
       comprobante: {'B1': 'IVA PROVEEDORES'})
 ];
 
-List<ArchivoDatos> listaArchivosDatos = [
+List<ArchivoDatos> listaArchivos = [
   ArchivoDatos(
       nombre: 'CHEP Factura',
       listaModelos: ['CHEP Datos'],
@@ -93,3 +102,35 @@ List<ArchivoDatos> listaArchivosDatos = [
       listaModelos: ['Excel Clientes', 'Excel Proveedores'],
       listaHojas: {'Clientes', 'Proveedores'})
 ];
+
+void refrescarListas(BuildContext context) async {
+    final File configModelos = File(getRoot() + 'modelos.json');
+    final File configArchivos = File(getRoot() + 'archivos.json');
+    bool cargados = true;
+    if (!_iniciado) {
+      try {
+        List<dynamic> lista = jsonDecode(await configModelos.readAsString());
+        listaModelos = (lista.map((e) => ModeloDatos.fromJson(e))).toList();
+        if (kDebugMode) {
+          print(getRoot() + 'modelos.json');
+        }
+      } catch (e) {
+        cargados = false;
+        mostrarError(TipoError.lecturaModelos, context);
+      }
+      try {
+        List<dynamic> lista = jsonDecode(await configArchivos.readAsString());
+        listaArchivos = (lista.map((e) => ArchivoDatos.fromJson(e))).toList();
+        if (kDebugMode) {
+          print(getRoot() + 'archivos.json');
+        }
+      } catch (e) {
+        cargados = false;
+        mostrarError(TipoError.lecturaArchivos, context);
+      }
+      if (cargados) {
+        customSnack('Configuración cargada', context);
+      }
+      _iniciado = true;
+    }
+  }

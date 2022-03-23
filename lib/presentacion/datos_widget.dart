@@ -50,7 +50,6 @@ class DatosWidget extends StatelessWidget {
                         return Padding(
                           padding: const EdgeInsets.only(bottom: 5),
                           child: ListTile(
-                            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(5)),
                             tileColor: getColor(datos
                                 .getListEntradas(numWidget)[index]
                                 .encontrado),
@@ -84,7 +83,7 @@ class DatosWidget extends StatelessWidget {
                         padding: customPadding,
                         child: ElevatedButton(
                             onPressed: () {
-                              datos.refrescarListas(context);
+                              
                               datos.seleccionarArchivo(numWidget, context);
                             },
                             child: const Text('Seleccionar Archivo')),

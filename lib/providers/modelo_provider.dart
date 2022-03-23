@@ -10,6 +10,12 @@ import 'package:flutter/cupertino.dart';
 class ModeloProvider extends ChangeNotifier {
   ModeloDatos? modeloDatos;
   bool cambios = false;
+  List<ModeloDatos> listaModelosDatos = [];
+
+  void refrescarListas() {
+    listaModelosDatos.clear();
+    listaModelosDatos.addAll(listaModelos);
+  }
 
   void setModelo(ModeloDatos modelo) {
     modeloDatos = modelo;
@@ -48,6 +54,7 @@ class ModeloProvider extends ChangeNotifier {
         break;
       default:
     }
+    notifyListeners();
   }
 
   bool validarTexto(CamposModelo campo, String valor) {
@@ -81,7 +88,7 @@ class ModeloProvider extends ChangeNotifier {
   }
 
   void nuevoModelo() {
-    listaModelos.add(ModeloDatos(
+    listaModelosDatos.add(ModeloDatos(
         nombre: 'Nuevo Modelo',
         primeraFila: 0,
         idColumna: '',
@@ -89,7 +96,7 @@ class ModeloProvider extends ChangeNotifier {
         sheet: '',
         fecha: '',
         comprobante: {}));
-    modeloDatos = listaModelos.firstWhere(
+    modeloDatos = listaModelosDatos.firstWhere(
       (element) => element.nombre == 'Nuevo Modelo',
     );
     cambios = true;
@@ -100,7 +107,7 @@ class ModeloProvider extends ChangeNotifier {
     bool result = await customDialog('Confirme la acción',
         '¿Está seguro de que desea eliminar el modelo?', context);
     if (result) {
-      listaModelos.remove(modelo);
+      listaModelosDatos.remove(modelo);
       modeloDatos = null;
       cambios = true;
       notifyListeners();
@@ -110,7 +117,7 @@ class ModeloProvider extends ChangeNotifier {
   Future<void> guardarModelos(BuildContext context) async {
     final File file = File(getRoot() + 'modelos.json');
     try {
-      await file.writeAsString(json.encode(listaModelos));
+      await file.writeAsString(json.encode(listaModelosDatos));
     } catch (e) {
       mostrarError(TipoError.escrituraModelos, context);
     }

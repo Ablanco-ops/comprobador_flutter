@@ -7,14 +7,26 @@ import 'package:comprobador_flutter/providers/modelo_provider.dart';
 
 import 'modelo_edit_tile.dart';
 
-class ConfiguracionModelosScreen extends StatelessWidget {
+class ConfiguracionModelosScreen extends StatefulWidget {
   const ConfiguracionModelosScreen({Key? key}) : super(key: key);
   static const routeName = '/ConfiguracionModelos';
 
   @override
+  State<ConfiguracionModelosScreen> createState() =>
+      _ConfiguracionModelosScreenState();
+}
+
+class _ConfiguracionModelosScreenState
+    extends State<ConfiguracionModelosScreen> {
+  bool _iniciado = false;
+  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ModeloProvider>(context);
     var display = MediaQuery.of(context).size;
+    if (!_iniciado) {
+      provider.refrescarListas();
+      _iniciado = true;
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -47,20 +59,22 @@ class ConfiguracionModelosScreen extends StatelessWidget {
                     Expanded(
                       // height: display.height * 0.6,
                       child: Card(
-                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(10)),
                         child: ListView.builder(
-                            itemCount: listaModelos.length,
+                            itemCount: provider.listaModelosDatos.length,
                             itemBuilder: (BuildContext context, int index) {
                               return Container(
                                 margin: const EdgeInsets.only(bottom: 5),
                                 child: ListTile(
-                                  onTap: (() =>
-                                      provider.setModelo(listaModelos[index])),
+                                  onTap: (() => provider.setModelo(
+                                      provider.listaModelosDatos[index])),
                                   shape: RoundedRectangleBorder(
                                       borderRadius: BorderRadius.circular(5)),
                                   tileColor: Colors.green,
                                   textColor: Colors.white,
-                                  title: Text(listaModelos[index].nombre),
+                                  title: Text(
+                                      provider.listaModelosDatos[index].nombre),
                                   trailing: IconButton(
                                     icon: const Icon(
                                       Icons.delete,

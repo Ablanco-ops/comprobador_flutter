@@ -46,7 +46,7 @@ class ExcelExtractor {
       listaHojas.add(hoja);
     }
     bool encontrado = false;
-    for (ArchivoDatos archivo in listaArchivosDatos) {
+    for (ArchivoDatos archivo in listaArchivos) {
       if (listaHojas.containsAll(archivo.listaHojas)) {
         _archivoDatos = archivo;
         encontrado = true;

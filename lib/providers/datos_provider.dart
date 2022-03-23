@@ -1,12 +1,9 @@
-import 'dart:convert';
 import 'dart:io';
 
 import 'package:comprobador_flutter/almacen_datos.dart';
 import 'package:comprobador_flutter/common.dart';
-import 'package:comprobador_flutter/excepciones.dart';
 import 'package:comprobador_flutter/exportar_excel.dart';
 import 'package:comprobador_flutter/modelo/entrada_datos.dart';
-import 'package:comprobador_flutter/modelo/modelo_datos.dart';
 import 'package:comprobador_flutter/pdf_extractor.dart';
 import 'package:comprobador_flutter/preferences.dart';
 import 'package:file_picker/file_picker.dart';
@@ -24,8 +21,7 @@ class DatosProvider extends ChangeNotifier {
   List<EntradaDatos> _listaEntradas2 = [];
   List<EntradaDatos> _listaEntradas1Filtrado = [];
   List<EntradaDatos> _listaEntradas2Filtrado = [];
-  // late ArchivoDatos _archivo1;
-  // late ArchivoDatos _archivo2;
+  
   int noEncontrados = 0;
   int correctos = 0;
   int incorrectos = 0;
@@ -37,17 +33,6 @@ class DatosProvider extends ChangeNotifier {
 
   String pathExcelExport = '';
 
-  void refrescarListas(BuildContext context) async {
-    final File file = File(getRoot() + 'modelos.json');
-
-    try {
-      List<dynamic> lista = jsonDecode(await file.readAsString());
-      listaModelos = (lista.map((e) => ModeloDatos.fromJson(e))).toList();
-      print(getRoot() + 'modelos.json');
-    } catch (e) {
-      mostrarError(TipoError.lecturaModelos, context);
-    }
-  }
 
   void obtenerDatos(int numWidget, TipoDatos tipoDatos, BuildContext context) {
     File path = numWidget == 1 ? _path1 : _path2;
@@ -60,7 +45,7 @@ class DatosProvider extends ChangeNotifier {
       }
       ExcelExtractor extractor = ExcelExtractor(path, context);
       listaEntradas = extractor.procesarExcel();
-      var archivoDatos = listaArchivosDatos.firstWhere((archivo) {
+      var archivoDatos = listaArchivos.firstWhere((archivo) {
         return archivo.listaModelos
             .any((modelo) => modelo == listaEntradas[0].modelo);
       });
@@ -80,7 +65,7 @@ class DatosProvider extends ChangeNotifier {
   }
 
   void buscarEntradas(String busqueda) {
-      filtrarDatos(filtroDatos);
+    filtrarDatos(filtroDatos);
     _listaEntradas1Filtrado
         .retainWhere((element) => element.identificador.contains(busqueda));
     _listaEntradas2Filtrado
@@ -218,7 +203,6 @@ class DatosProvider extends ChangeNotifier {
   }
 
   void exportar(BuildContext context) {
-    // ExportarExcel.exceltest();
     Preferences.getPathExcel().then((value) => pathExcelExport = value);
 
     if (pathExcelExport == '') {

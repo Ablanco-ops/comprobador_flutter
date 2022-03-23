@@ -11,14 +11,13 @@ import '../excepciones.dart';
 
 class ArchivoProvider extends ChangeNotifier {
   ArchivoDatos? archivo;
+  bool cambios = false;
   List<ModeloDatos> listaModelosFiltrada = [];
-  List<ArchivoDatos> _listaArchivosDatos = [];
+  List<ArchivoDatos> listaArchivosDatos = [];
 
-  List<ArchivoDatos> getListaArchivos() {
-    if (_listaArchivosDatos.isEmpty) {
-      _listaArchivosDatos.addAll(listaArchivosDatos);
-    }
-    return _listaArchivosDatos;
+  void getListaArchivos() {
+    listaArchivosDatos.clear();
+    listaArchivosDatos.addAll(listaArchivos);
   }
 
   void setArchivo(ArchivoDatos archivoDatos) {
@@ -40,14 +39,17 @@ class ArchivoProvider extends ChangeNotifier {
         '¿Quiere cambiar el nombre del Archivo de datos?', context);
     if (result) {
       archivo!.nombre = nombre;
+      cambios = true;
+      notifyListeners();
     }
   }
 
   void addArchivo() {
-    _listaArchivosDatos.add(ArchivoDatos(
+    listaArchivosDatos.add(ArchivoDatos(
         nombre: 'Nuevo Archivo', listaModelos: [], listaHojas: {}));
-    setArchivo(_listaArchivosDatos
+    setArchivo(listaArchivosDatos
         .firstWhere((element) => element.nombre == 'Nuevo Archivo'));
+    cambios = true;
     notifyListeners();
   }
 
@@ -55,8 +57,9 @@ class ArchivoProvider extends ChangeNotifier {
     final result = await customDialog(
         'Confirmación', '¿Desea eliminar el archivo?', context);
     if (result) {
-      _listaArchivosDatos.remove(archivoDatos);
+      listaArchivosDatos.remove(archivoDatos);
       archivo = null;
+      cambios = true;
       notifyListeners();
     }
   }
@@ -64,7 +67,7 @@ class ArchivoProvider extends ChangeNotifier {
   Future<void> guardarArchivos(BuildContext context) async {
     final File file = File(getRoot() + 'archivos.json');
     try {
-      await file.writeAsString(json.encode(_listaArchivosDatos));
+      await file.writeAsString(json.encode(listaArchivosDatos));
     } catch (e) {
       mostrarError(TipoError.escrituraModelos, context);
     }
@@ -75,12 +78,14 @@ class ArchivoProvider extends ChangeNotifier {
     archivo!.listaModelos.add(modeloDatos.nombre);
     archivo!.listaHojas.add(modeloDatos.sheet);
     listaModelosFiltrada.remove(modeloDatos);
+    cambios = true;
     notifyListeners();
   }
 
   void borrarModelo(String modelo) {
     archivo!.listaModelos.remove(modelo);
     _listarModelos();
+    cambios = true;
     notifyListeners();
   }
 }
