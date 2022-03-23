@@ -20,3 +20,7 @@ se puede filtrar y exportar en un xlsx.
 ## Construido con 
 
 Flutter 2.10.3
+
+## Construido con 
+
+Flutter 2.10.3
