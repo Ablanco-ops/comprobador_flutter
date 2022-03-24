@@ -4,6 +4,8 @@ import 'package:provider/provider.dart';
 import '../common.dart';
 import '../providers/modelo_provider.dart';
 
+// Widget auxiliar de configuracion_modelos_screen
+
 class ModeloEditTile extends StatefulWidget {
   final CamposModelo campo;
   final String titulo;
@@ -21,9 +23,6 @@ class ModeloEditTile extends StatefulWidget {
 class _EditTileState extends State<ModeloEditTile> {
   bool editando = false;
   final _controller = TextEditingController();
-
-  
-
 
   @override
   void dispose() {

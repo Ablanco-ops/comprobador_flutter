@@ -7,6 +7,9 @@ import 'package:comprobador_flutter/providers/modelo_provider.dart';
 
 import 'modelo_edit_tile.dart';
 
+/* Pantalla para la configuracion de los modelos de datos, obtiene los
+datos y funciones de providers/modelo_provider.dart */
+
 class ConfiguracionModelosScreen extends StatefulWidget {
   const ConfiguracionModelosScreen({Key? key}) : super(key: key);
   static const routeName = '/ConfiguracionModelos';
@@ -23,7 +26,7 @@ class _ConfiguracionModelosScreenState
   Widget build(BuildContext context) {
     final provider = Provider.of<ModeloProvider>(context);
     var display = MediaQuery.of(context).size;
-    if (!_iniciado) {
+    if (!_iniciado) { //refresca las listas cada vez que accedemos a pantalla de configuración de modelos
       provider.refrescarListas();
       _iniciado = true;
     }
@@ -52,100 +55,108 @@ class _ConfiguracionModelosScreenState
             mainAxisAlignment: MainAxisAlignment.spaceAround,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
+              // Lista de modelos de datos
               SizedBox(
                 width: display.width * 0.3,
-                child: Row(
+                child: Column(
                   children: [
+                    Text('Modelos de datos',style: Theme.of(context).textTheme.headline4),
                     Expanded(
-                      // height: display.height * 0.6,
-                      child: Card(
-                        shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(10)),
-                        child: ListView.builder(
-                            itemCount: provider.listaModelosDatos.length,
-                            itemBuilder: (BuildContext context, int index) {
-                              return Container(
-                                margin: const EdgeInsets.only(bottom: 5),
-                                child: ListTile(
-                                  onTap: (() => provider.setModelo(
-                                      provider.listaModelosDatos[index])),
-                                  shape: RoundedRectangleBorder(
-                                      borderRadius: BorderRadius.circular(5)),
-                                  tileColor: Colors.green,
-                                  textColor: Colors.white,
-                                  title: Text(
-                                      provider.listaModelosDatos[index].nombre),
-                                  trailing: IconButton(
-                                    icon: const Icon(
-                                      Icons.delete,
-                                      color: Colors.white,
-                                    ),
-                                    onPressed: () => provider.eliminarModelo(
-                                        listaModelos[index], context),
+                      child: Row(
+                        children: [ 
+                          Expanded(
+                            child: Card(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius: BorderRadius.circular(10)),
+                              child: ListView.builder(
+                                  itemCount: provider.listaModelosDatos.length,
+                                  itemBuilder: (BuildContext context, int index) {
+                                    return Container(
+                                      margin: const EdgeInsets.only(bottom: 5),
+                                      child: ListTile(
+                                        onTap: (() => provider.setModelo(
+                                            provider.listaModelosDatos[index])),
+                                        shape: RoundedRectangleBorder(
+                                            borderRadius: BorderRadius.circular(5)),
+                                        tileColor: Colors.green,
+                                        textColor: Colors.white,
+                                        title: Text(
+                                            provider.listaModelosDatos[index].nombre),
+                                        trailing: IconButton(
+                                          icon: const Icon(
+                                            Icons.delete,
+                                            color: Colors.white,
+                                          ),
+                                          onPressed: () => provider.eliminarModelo(
+                                              listaModelos[index], context),
+                                        ),
+                                      ),
+                                    );
+                                  }),
+                            ),
+                          ),
+                          Column(
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            children: [
+                              IconButton(
+                                  onPressed: provider.nuevoModelo,
+                                  icon: const Icon(
+                                    Icons.add_circle,
+                                    size: 36,
                                   ),
-                                ),
-                              );
-                            }),
+                                  color: Colors.green),
+                              const SizedBox(height: 10),
+                              IconButton(
+                                  onPressed: () => provider.guardarModelos(context),
+                                  icon: const Icon(
+                                    Icons.save,
+                                    size: 36,
+                                  ),
+                                  color: Colors.red),
+                            ],
+                          ),
+                        ],
                       ),
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.start,
-                      children: [
-                        IconButton(
-                            onPressed: provider.nuevoModelo,
-                            icon: const Icon(
-                              Icons.add_circle,
-                              size: 36,
-                            ),
-                            color: Colors.green),
-                        const SizedBox(height: 10),
-                        IconButton(
-                            onPressed: () => provider.guardarModelos(context),
-                            icon: const Icon(
-                              Icons.save,
-                              size: 36,
-                            ),
-                            color: Colors.red),
-                      ],
                     ),
                   ],
                 ),
               ),
+              // Editor de los campos del modelo
               SizedBox(
                 width: display.width * 0.4,
-                height: display.height * 0.8,
                 child: Column(
                   children: [
-                    Card(
-                      child: SizedBox(
-                        // width: display.width * 0.3,
-                        // height: display.height * 0.5,
-                        child: Column(
-                          children: const [
-                            ModeloEditTile(
-                                titulo: 'Nombre', campo: CamposModelo.nombre),
-                            ModeloEditTile(
-                                titulo: 'Primera Fila',
-                                campo: CamposModelo.primeraFila),
-                            ModeloEditTile(
-                                titulo: 'Columna Id',
-                                campo: CamposModelo.idColumna),
-                            ModeloEditTile(
-                                titulo: 'Columna Cod Producto',
-                                campo: CamposModelo.codProductoColumna),
-                            ModeloEditTile(
-                                titulo: 'Columna Fecha',
-                                campo: CamposModelo.fecha),
-                            ModeloEditTile(
-                                titulo: 'Cod Producto',
-                                campo: CamposModelo.codProducto),
-                            ModeloEditTile(
-                                titulo: 'Hoja Excel',
-                                campo: CamposModelo.sheet),
-                            ModeloEditTile(
-                                titulo: 'Comprobante',
-                                campo: CamposModelo.comprobante),
-                          ],
+                    Text('Configuración del modelo',style: Theme.of(context).textTheme.headline4,),
+                    Expanded(
+                      child: Card(
+                        child: SizedBox(
+                          child: Column(
+                            children: const [
+                              ModeloEditTile(
+                                  titulo: 'Nombre', campo: CamposModelo.nombre),
+                              ModeloEditTile(
+                                  titulo: 'Primera Fila',
+                                  campo: CamposModelo.primeraFila),
+                              ModeloEditTile(
+                                  titulo: 'Columna Id',
+                                  campo: CamposModelo.idColumna),
+                              ModeloEditTile(
+                                  titulo: 'Columna Cod Producto',
+                                  campo: CamposModelo.codProductoColumna),
+                              ModeloEditTile(
+                                  titulo: 'Columna Fecha',
+                                  campo: CamposModelo.fecha),
+                              ModeloEditTile(
+                                  titulo: 'Cod Producto',
+                                  campo: CamposModelo.codProducto),
+                              ModeloEditTile(
+                                  titulo: 'Hoja Excel',
+                                  campo: CamposModelo.sheet),
+                              ModeloEditTile(
+                                  titulo: 'Comprobante',
+                                  campo: CamposModelo.comprobante),
+                            ],
+                          ),
                         ),
                       ),
                     ),

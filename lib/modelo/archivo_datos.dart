@@ -2,6 +2,8 @@ import 'package:json_annotation/json_annotation.dart';
 
 part 'archivo_datos.g.dart';
 
+// Varias hojas de excel con sus respectivos modelos
+
 @JsonSerializable(explicitToJson: true)
 class ArchivoDatos {
   String nombre;

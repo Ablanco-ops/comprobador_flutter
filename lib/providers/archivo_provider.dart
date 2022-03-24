@@ -9,24 +9,25 @@ import 'package:flutter/cupertino.dart';
 
 import '../excepciones.dart';
 
+// Clase para gestionar los datos que muestra la pantalla de configuración de archivos
 class ArchivoProvider extends ChangeNotifier {
   ArchivoDatos? archivo;
   bool cambios = false;
-  List<ModeloDatos> listaModelosFiltrada = [];
-  List<ArchivoDatos> listaArchivosDatos = [];
+  List<ModeloDatos> listaModelosFiltrada = []; // lista delos modelos que podemos añadir al archivo
+  List<ArchivoDatos> listaArchivosDatos = []; //lista que contiene los archivos de datos pra modificar
 
-  void getListaArchivos() {
+  void getListaArchivos() { //obtiene los archivos de datos del almacén
     listaArchivosDatos.clear();
     listaArchivosDatos.addAll(listaArchivos);
   }
 
-  void setArchivo(ArchivoDatos archivoDatos) {
+  void setArchivo(ArchivoDatos archivoDatos) {  //selecciona el archivo de datos a modificar
     archivo = archivoDatos;
     _listarModelos();
     notifyListeners();
   }
 
-  void _listarModelos() {
+  void _listarModelos() { //limpia la lista de modelos, añade todos los del almacén y luego los filtra en función de la lista de nombres del archivo
     listaModelosFiltrada.clear();
     listaModelosFiltrada.addAll(listaModelos);
     listaModelosFiltrada.removeWhere(
@@ -52,6 +53,7 @@ class ArchivoProvider extends ChangeNotifier {
     cambios = true;
     notifyListeners();
   }
+
 
   void borrarArchivo(ArchivoDatos archivoDatos, BuildContext context) async {
     final result = await customDialog(

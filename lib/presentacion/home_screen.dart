@@ -8,6 +8,9 @@ import 'package:provider/provider.dart';
 import '../almacen_datos.dart';
 import 'datos_widget.dart';
 
+
+/* Pantalla principal en la que se muestran los datos comparados, utiliza providers/datos_provider.dart
+ */
 class HomeScreen extends StatelessWidget {
   const HomeScreen({Key? key}) : super(key: key);
 
@@ -20,7 +23,9 @@ class HomeScreen extends StatelessWidget {
 
     return Scaffold(
       appBar: AppBar(title: const Text('Comparador de archivos')),
-      drawer: Drawer(
+
+      // Desde el drawer podemos acceder a la configuración
+      drawer: Drawer( 
         child: ListView(
           padding: EdgeInsets.zero,
           children: [

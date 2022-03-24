@@ -13,10 +13,12 @@ import 'package:flutter/foundation.dart';
 import '../common.dart';
 import '../excel_extractor.dart';
 
+// Proveedor de datos de la pantalla principal home_screendart
 class DatosProvider extends ChangeNotifier {
   File _path1 = File('');
   File _path2 = File('');
 
+  //lista de entradas total y filtrada de cada archivo
   List<EntradaDatos> _listaEntradas1 = [];
   List<EntradaDatos> _listaEntradas2 = [];
   List<EntradaDatos> _listaEntradas1Filtrado = [];
@@ -33,7 +35,7 @@ class DatosProvider extends ChangeNotifier {
 
   String pathExcelExport = '';
 
-
+  
   void obtenerDatos(int numWidget, TipoDatos tipoDatos, BuildContext context) {
     File path = numWidget == 1 ? _path1 : _path2;
     List<EntradaDatos> listaEntradas = [];

@@ -1,6 +1,7 @@
 import 'package:json_annotation/json_annotation.dart';
 part 'modelo_datos.g.dart';
 
+// Modelo de datos para buscar las entradas en una hoja de excel
 @JsonSerializable(explicitToJson: true)
 class ModeloDatos {
    String nombre;

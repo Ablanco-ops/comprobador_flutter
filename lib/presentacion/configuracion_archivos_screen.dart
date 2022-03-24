@@ -5,6 +5,9 @@ import 'package:provider/provider.dart';
 
 import '../common.dart';
 
+// Pantalla en la que configuramos los archivos de datos, los datos y funciones
+// empleados por esta clase estan en providers/archivo_provider.dart
+
 class ConfiguracionArchivosScreen extends StatefulWidget {
   const ConfiguracionArchivosScreen({Key? key}) : super(key: key);
   static const routeName = '/ConfiguracionArchivos';
@@ -30,7 +33,7 @@ class _ConfiguracionArchivosScreenState
   Widget build(BuildContext context) {
     final provider = Provider.of<ArchivoProvider>(context);
     final display = MediaQuery.of(context).size;
-    if (!_iniciado) {
+    if (!_iniciado) {      //Refresca los datos cada vez que accedemos a la pantalla de configuracion
       provider.getListaArchivos();
       _iniciado = true;
     }
@@ -38,7 +41,7 @@ class _ConfiguracionArchivosScreenState
     String nombre = '';
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(onPressed: () async {
+        leading: BackButton(onPressed: () async { //en caso de haber cambios nos pregunta antes de salir
           if (provider.cambios) {
             bool result = await customDialog(
                 'Confirmar', '¿Desea guardar los cambios?', context);
@@ -51,9 +54,12 @@ class _ConfiguracionArchivosScreenState
         }),
         title: const Text('Configuración de archivos de datos'),
       ),
-      body: Padding(
+
+      body: Padding( 
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
+
+          //Lista de los arcihvos de datos configurados
           SizedBox(
             width: display.width * 0.3,
             child: Column(
@@ -89,6 +95,7 @@ class _ConfiguracionArchivosScreenState
                                   .toList()),
                         ),
                       ),
+                      //Botones laterales de la lista de archivos
                       Column(
                         mainAxisAlignment: MainAxisAlignment.start,
                         children: [
@@ -116,6 +123,7 @@ class _ConfiguracionArchivosScreenState
               ],
             ),
           ),
+          // Configuración del archivo seleccionado
           SizedBox(
             width: display.width * 0.3,
             child: Column(
@@ -155,7 +163,7 @@ class _ConfiguracionArchivosScreenState
                         ],
                       ),
                       Expanded(
-                        child: DragTarget(
+                        child: DragTarget( //los modelos de datos pueden ser arrastrados aquí para añadirlos al archivo
                           onWillAccept: (data) => true,
                           onAccept: (ModeloDatos modelo) =>
                               provider.addModelo(modelo, context),
@@ -195,6 +203,8 @@ class _ConfiguracionArchivosScreenState
               ],
             ),
           ),
+
+          //lista de modelos que se pueden añadir al archivo
           SizedBox(
             width: display.width * 0.3,
             child: Column(
@@ -216,7 +226,7 @@ class _ConfiguracionArchivosScreenState
                                 child: Padding(
                                   padding: const EdgeInsets.only(bottom: 5),
                                   child: ListTile(
-                                      onTap: () => customSimpleDialog(
+                                      onTap: () => _customSimpleDialog(
                                           'Información del modelo',
                                           '',
                                           context,
@@ -235,7 +245,7 @@ class _ConfiguracionArchivosScreenState
   }
 }
 
-Future<void> customSimpleDialog(String title, String texto,
+Future<void> _customSimpleDialog(String title, String texto,
     BuildContext context, ModeloDatos modelo) async {
   return await showDialog(
       context: context,

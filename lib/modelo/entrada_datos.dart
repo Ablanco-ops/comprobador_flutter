@@ -1,6 +1,6 @@
 import 'package:comprobador_flutter/common.dart';
 
-
+// Clase que describe cada entrada de datos
 class EntradaDatos {
   final String identificador;
   final String? codProducto;

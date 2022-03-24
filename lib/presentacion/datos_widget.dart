@@ -4,6 +4,9 @@ import 'package:provider/provider.dart';
 
 import '../providers/datos_provider.dart';
 
+
+/* Widget auxiliar utilizado por home_screen.dart en el que se cargan los 
+ficheros a comparar */
 class DatosWidget extends StatelessWidget {
   const DatosWidget({
     Key? key,
@@ -16,7 +19,7 @@ class DatosWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final display = MediaQuery.of(context).size;
     final datos = Provider.of<DatosProvider>(context);
-    MaterialColor getColor(Filtro encontrado) {
+    MaterialColor getColor(Filtro encontrado) { //Asigna un color a la entrada de datos en función de si ha encontrado correspondencia o no 
       if (encontrado == Filtro.correcto) {
         return Colors.green;
       } else if (encontrado == Filtro.incorrecto) {
@@ -27,16 +30,11 @@ class DatosWidget extends StatelessWidget {
     }
 
     return SizedBox(
-      height: display.height,
       width: display.width * 0.3,
-      // color: Colors.blue,
       child: Column(
-        // mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
           SizedBox(
               height: display.height * 0.60,
-              width: display.width * 0.3,
-              // color: Colors.red,
               child: Card(
                 child: datos.getListEntradas(numWidget).isEmpty
                   ? const Center(
@@ -65,7 +63,6 @@ class DatosWidget extends StatelessWidget {
                       }))),
           SizedBox(
             height: display.height * 0.25,
-            width: display.width * 0.3,
             child: Card(
               shape: RoundedRectangleBorder(side: const BorderSide(color: Colors.green) ,borderRadius: BorderRadius.circular(10)),
               child: Column(
