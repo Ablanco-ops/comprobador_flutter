@@ -45,8 +45,8 @@ class DatosProvider extends ChangeNotifier {
       if (kDebugMode) {
         print('archivo excel $path');
       }
-      ExcelExtractor extractor = ExcelExtractor(path, context);
-      listaEntradas = extractor.procesarExcel();
+      ExcelExtractor extractor = ExcelExtractor(path);
+      listaEntradas = extractor.procesarExcel(context);
       var archivoDatos = listaArchivos.firstWhere((archivo) {
         return archivo.listaModelos
             .any((modelo) => modelo == listaEntradas[0].modelo);

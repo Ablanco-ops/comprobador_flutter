@@ -13,22 +13,22 @@ import 'modelo/modelo_datos.dart';
 
 class ExcelExtractor {
   final File _file;
-  final BuildContext context;
+  
   late Excel excel;
   late ArchivoDatos _archivoDatos;
 
-  ExcelExtractor(this._file, this.context);
+  ExcelExtractor(this._file);
 
-  List<EntradaDatos> procesarExcel() {
-    getExcel();
-    if (getArchivo()) {
-      return leerExcel();
+  List<EntradaDatos> procesarExcel(BuildContext context) {
+    getExcel(context);
+    if (getArchivo(context)) {
+      return leerExcel(context);
     } else {
       return [];
     }
   }
 
-  void getExcel() {
+  void getExcel(BuildContext context) {
     try {
       var bytes = _file.readAsBytesSync();
       excel = Excel.decodeBytes(bytes);
@@ -37,7 +37,7 @@ class ExcelExtractor {
     }
   }
 
-  bool getArchivo() {
+  bool getArchivo(BuildContext context) {
     Set<String> listaHojas = {};
     for (var hoja in excel.tables.keys) {
       if (kDebugMode) {
@@ -57,23 +57,29 @@ class ExcelExtractor {
       }
     }
     if (!encontrado) {
-      mostrarExcepcion(TipoExcepcion.archivoIncorrecto, context);
+      mostrarExcepcion(TipoExcepcion.archivoIncorrecto, '', context);
     }
     return encontrado;
   }
 
-  List<EntradaDatos> leerExcel() {
+  List<EntradaDatos> leerExcel(BuildContext context) {
     List<EntradaDatos> listaEntradas = [];
 
     for (String nombreModelo in _archivoDatos.listaModelos) {
       ModeloDatos modelo =
           listaModelos.firstWhere((element) => element.nombre == nombreModelo);
       Sheet hoja = excel[modelo.sheet];
-
+      if (kDebugMode) {
+        print(modelo.nombre);
+      }
       String fecha = '';
       for (String valor in modelo.comprobante.keys) {
         if (hoja.cell(CellIndex.indexByString(valor)).value !=
             modelo.comprobante[valor]) {
+          if (kDebugMode) {
+            print('comprobante rroneo');
+          }
+          mostrarExcepcion(TipoExcepcion.datosIncorrectos,modelo.sheet, context);
           return listaEntradas;
         }
       }
@@ -117,7 +123,7 @@ class ExcelExtractor {
                   .value)
               .toDouble();
           // if (kDebugMode) {
-          //   print(fecha + '|' + id + '|' + cantidad);
+          //   print(fecha + '|' + id + '|' + cantidad.toString());
           // }
           if (listaEntradas.any((element) =>
               element.identificador == id &&

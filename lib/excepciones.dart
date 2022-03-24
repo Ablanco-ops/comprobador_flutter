@@ -31,12 +31,18 @@ void _customAlert(String title, String texto, BuildContext context) {
       });
 }
 
-void mostrarExcepcion(TipoExcepcion tipoExcepcion, BuildContext context) {
+void mostrarExcepcion(TipoExcepcion tipoExcepcion,String valor, BuildContext context) {
   switch (tipoExcepcion) {
+    case TipoExcepcion.datosIncorrectos:
+      {
+        _customAlert('Datos incorrectos',
+            'La hoja $valor no cumple la comprobación', context);
+      }
+      break;
     case TipoExcepcion.archivoIncorrecto:
       {
-        _customAlert('Archivo Incorrecto',
-            'El archivo seleccionado no es válido', context);
+        _customAlert('Archivo incorrecto',
+            'El archivo no se ajusta a ningun tipo registrado', context);
       }
       break;
     default:
