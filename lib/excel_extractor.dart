@@ -13,7 +13,7 @@ import 'modelo/modelo_datos.dart';
 
 class ExcelExtractor {
   final File _file;
-  
+
   late Excel excel;
   late ArchivoDatos _archivoDatos;
 
@@ -79,7 +79,8 @@ class ExcelExtractor {
           if (kDebugMode) {
             print('comprobante rroneo');
           }
-          mostrarExcepcion(TipoExcepcion.datosIncorrectos,modelo.sheet, context);
+          mostrarExcepcion(
+              TipoExcepcion.datosIncorrectos, modelo.sheet, context);
           return listaEntradas;
         }
       }
@@ -117,11 +118,24 @@ class ExcelExtractor {
                 .value
                 .toString();
           }
-          double cantidad = (hoja
+          double cantidad = 0;
+          if (hoja
                   .cell(CellIndex.indexByString(
                       modelo.cantidadColumna + i.toString()))
-                  .value)
-              .toDouble();
+                  .value !=
+              null) {
+            try {
+              cantidad = (hoja
+                      .cell(CellIndex.indexByString(
+                          modelo.cantidadColumna + i.toString()))
+                      .value)
+                  .toDouble();
+            } catch (e) {
+              mostrarExcepcion(TipoExcepcion.errorNumerico,
+                  '${modelo.cantidadColumna}:$i', context);
+            }
+          }
+
           // if (kDebugMode) {
           //   print(fecha + '|' + id + '|' + cantidad.toString());
           // }

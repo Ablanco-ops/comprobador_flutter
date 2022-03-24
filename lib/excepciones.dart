@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-enum TipoExcepcion { archivoIncorrecto, datosIncorrectos, noEncontrado }
+enum TipoExcepcion { archivoIncorrecto, datosIncorrectos, errorNumerico }
 enum TipoError {
   lecturaExcel,
   lecturaModelos,
@@ -43,6 +43,12 @@ void mostrarExcepcion(TipoExcepcion tipoExcepcion,String valor, BuildContext con
       {
         _customAlert('Archivo incorrecto',
             'El archivo no se ajusta a ningun tipo registrado', context);
+      }
+      break;
+      case TipoExcepcion.errorNumerico:
+      {
+        _customAlert('Error de formato',
+            'Valores incorrectos en la columna de cantidad: $valor', context);
       }
       break;
     default:
