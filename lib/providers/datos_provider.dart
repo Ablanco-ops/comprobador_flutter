@@ -9,6 +9,7 @@ import 'package:comprobador_flutter/preferences.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
 
 import '../common.dart';
 import '../excel_extractor.dart';
@@ -23,7 +24,7 @@ class DatosProvider extends ChangeNotifier {
   List<EntradaDatos> _listaEntradas2 = [];
   List<EntradaDatos> _listaEntradas1Filtrado = [];
   List<EntradaDatos> _listaEntradas2Filtrado = [];
-  
+
   int noEncontrados = 0;
   int correctos = 0;
   int incorrectos = 0;
@@ -35,7 +36,7 @@ class DatosProvider extends ChangeNotifier {
 
   String pathExcelExport = '';
 
-  
+  //Crea una instancia de ExcelExtractor, saca las entradas de datos del excel y el tipo de archivo
   void obtenerDatos(int numWidget, TipoDatos tipoDatos, BuildContext context) {
     File path = numWidget == 1 ? _path1 : _path2;
     List<EntradaDatos> listaEntradas = [];
@@ -175,32 +176,35 @@ class DatosProvider extends ChangeNotifier {
     if (_listaEntradas1.isEmpty || _listaEntradas2.isEmpty) {
       customSnack('No hay datos para comprobar', context);
     }
+    // recorre la lista de entradas1 y por cada una busca la correspodiente en la lista2 con mismo id y codigo,
+    // luego compara los entradas y las clasificas en correctas e incorrectas
     for (EntradaDatos entrada in _listaEntradas1) {
-      if (_listaEntradas2
-          .any((element) => element.identificador == entrada.identificador)) {
-        var match = _listaEntradas2.firstWhere(
-            (element) => element.identificador == entrada.identificador);
+      var match = _listaEntradas2.firstWhereOrNull((element) =>
+          (element.identificador == entrada.identificador &&
+              element.codProducto == entrada.codProducto));
+      if(match !=null){
         if (entrada.cantidad.abs() == match.cantidad.abs()) {
-          entrada.encontrado = Filtro.correcto;
-          match.encontrado = Filtro.correcto;
-        } else {
-          entrada.encontrado = Filtro.incorrecto;
-          match.encontrado = Filtro.incorrecto;
-        }
-        noEncontrados = _listaEntradas1
-                .where((element) => element.encontrado == Filtro.noEncontrado)
-                .length +
-            _listaEntradas2
-                .where((element) => element.encontrado == Filtro.noEncontrado)
-                .length;
-        correctos = _listaEntradas1
-            .where((element) => element.encontrado == Filtro.correcto)
-            .length;
-        incorrectos = _listaEntradas1
-            .where((element) => element.encontrado == Filtro.incorrecto)
-            .length;
-        notifyListeners();
+        entrada.encontrado = Filtro.correcto;
+        match.encontrado = Filtro.correcto;
+      } else {
+        entrada.encontrado = Filtro.incorrecto;
+        match.encontrado = Filtro.incorrecto;
       }
+      }
+      
+      noEncontrados = _listaEntradas1
+              .where((element) => element.encontrado == Filtro.noEncontrado)
+              .length +
+          _listaEntradas2
+              .where((element) => element.encontrado == Filtro.noEncontrado)
+              .length;
+      correctos = _listaEntradas1
+          .where((element) => element.encontrado == Filtro.correcto)
+          .length;
+      incorrectos = _listaEntradas1
+          .where((element) => element.encontrado == Filtro.incorrecto)
+          .length;
+      notifyListeners();
     }
   }
 
