@@ -1,3 +1,4 @@
+import 'package:comprobador_flutter/almacen_datos.dart';
 import 'package:comprobador_flutter/modelo/modelo_datos.dart';
 import 'package:comprobador_flutter/providers/archivo_provider.dart';
 import 'package:flutter/material.dart';
@@ -33,15 +34,17 @@ class _ConfiguracionArchivosScreenState
   Widget build(BuildContext context) {
     final provider = Provider.of<ArchivoProvider>(context);
     final display = MediaQuery.of(context).size;
-    if (!_iniciado) {      //Refresca los datos cada vez que accedemos a la pantalla de configuracion
-      provider.getListaArchivos();
+    if (!_iniciado) {
+      //Refresca los datos cada vez que accedemos a la pantalla de configuracion
+      provider.getListaArchivos(context);
       _iniciado = true;
     }
 
     String nombre = '';
     return Scaffold(
       appBar: AppBar(
-        leading: BackButton(onPressed: () async { //en caso de haber cambios nos pregunta antes de salir
+        leading: BackButton(onPressed: () async {
+          //en caso de haber cambios nos pregunta antes de salir
           if (provider.cambios) {
             bool result = await customDialog(
                 'Confirmar', '¿Desea guardar los cambios?', context);
@@ -49,16 +52,16 @@ class _ConfiguracionArchivosScreenState
               provider.guardarArchivos(context);
             }
           }
-
+          provider.cambios = false;
+          _iniciado = false;
+          AlmacenDatos.refrescarListas(context);
           Navigator.pop(context);
         }),
         title: const Text('Configuración de archivos de datos'),
       ),
-
-      body: Padding( 
+      body: Padding(
         padding: const EdgeInsets.symmetric(vertical: 16),
         child: Row(mainAxisAlignment: MainAxisAlignment.spaceEvenly, children: [
-
           //Lista de los arcihvos de datos configurados
           SizedBox(
             width: display.width * 0.3,
@@ -163,7 +166,8 @@ class _ConfiguracionArchivosScreenState
                         ],
                       ),
                       Expanded(
-                        child: DragTarget( //los modelos de datos pueden ser arrastrados aquí para añadirlos al archivo
+                        child: DragTarget(
+                          //los modelos de datos pueden ser arrastrados aquí para añadirlos al archivo
                           onWillAccept: (data) => true,
                           onAccept: (ModeloDatos modelo) =>
                               provider.addModelo(modelo, context),

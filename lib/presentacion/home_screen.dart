@@ -18,7 +18,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final display = MediaQuery.of(context).size;
     final datos = Provider.of<DatosProvider>(context);
-    refrescarListas(context);
+    AlmacenDatos.refrescarListas(context);
     String textoBusqueda = '';
 
     return Scaffold(

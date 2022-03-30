@@ -48,7 +48,7 @@ class DatosProvider extends ChangeNotifier {
       }
       ExcelExtractor extractor = ExcelExtractor(path);
       listaEntradas = extractor.procesarExcel(context);
-      var archivoDatos = listaArchivos.firstWhere((archivo) {
+      var archivoDatos = AlmacenDatos.listaArchivos.firstWhere((archivo) {
         return archivo.listaModelos
             .any((modelo) => modelo == listaEntradas[0].modelo);
       });

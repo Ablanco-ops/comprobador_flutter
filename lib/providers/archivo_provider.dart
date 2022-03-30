@@ -13,23 +13,29 @@ import '../excepciones.dart';
 class ArchivoProvider extends ChangeNotifier {
   ArchivoDatos? archivo;
   bool cambios = false;
-  List<ModeloDatos> listaModelosFiltrada = []; // lista delos modelos que podemos añadir al archivo
-  List<ArchivoDatos> listaArchivosDatos = []; //lista que contiene los archivos de datos pra modificar
+  List<ModeloDatos> listaModelosFiltrada =
+      []; // lista delos modelos que podemos añadir al archivo
+  List<ArchivoDatos> listaArchivosDatos =
+      []; //lista que contiene los archivos de datos pra modificar
 
-  void getListaArchivos() { //obtiene los archivos de datos del almacén
+  void getListaArchivos(BuildContext context) {
+    //obtiene los archivos de datos del almacén
     listaArchivosDatos.clear();
-    listaArchivosDatos.addAll(listaArchivos);
+    AlmacenDatos.refrescarListas(context);
+    listaArchivosDatos.addAll(AlmacenDatos.listaArchivos);
   }
 
-  void setArchivo(ArchivoDatos archivoDatos) {  //selecciona el archivo de datos a modificar
+  void setArchivo(ArchivoDatos archivoDatos) {
+    //selecciona el archivo de datos a modificar
     archivo = archivoDatos;
     _listarModelos();
     notifyListeners();
   }
 
-  void _listarModelos() { //limpia la lista de modelos, añade todos los del almacén y luego los filtra en función de la lista de nombres del archivo
+  void _listarModelos() {
+    //limpia la lista de modelos, añade todos los del almacén y luego los filtra en función de la lista de nombres del archivo
     listaModelosFiltrada.clear();
-    listaModelosFiltrada.addAll(listaModelos);
+    listaModelosFiltrada.addAll(AlmacenDatos.listaModelos);
     listaModelosFiltrada.removeWhere(
         (element) => archivo!.listaModelos.contains(element.nombre));
     notifyListeners();
@@ -45,7 +51,8 @@ class ArchivoProvider extends ChangeNotifier {
     }
   }
 
-  void addArchivo() { //Crea un archovo de datos y lo selecciona para editar
+  void addArchivo() {
+    //Crea un archovo de datos y lo selecciona para editar
     listaArchivosDatos.add(ArchivoDatos(
         nombre: 'Nuevo Archivo', listaModelos: [], listaHojas: {}));
     setArchivo(listaArchivosDatos
@@ -53,7 +60,6 @@ class ArchivoProvider extends ChangeNotifier {
     cambios = true;
     notifyListeners();
   }
-
 
   void borrarArchivo(ArchivoDatos archivoDatos, BuildContext context) async {
     final result = await customDialog(
@@ -70,6 +76,7 @@ class ArchivoProvider extends ChangeNotifier {
     final File file = File(getRoot() + 'archivos.json');
     try {
       await file.writeAsString(json.encode(listaArchivosDatos));
+      cambios = false;
     } catch (e) {
       mostrarError(TipoError.escrituraModelos, context);
     }

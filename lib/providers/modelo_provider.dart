@@ -10,11 +10,13 @@ import 'package:flutter/cupertino.dart';
 class ModeloProvider extends ChangeNotifier {
   ModeloDatos? modeloDatos;
   bool cambios = false;
+  bool iniciado = false;
   List<ModeloDatos> listaModelosDatos = [];
 
-  void refrescarListas() {
+  void refrescarListas(BuildContext context) {
     listaModelosDatos.clear();
-    listaModelosDatos.addAll(listaModelos);
+    AlmacenDatos.refrescarListas(context);
+    listaModelosDatos.addAll(AlmacenDatos.listaModelos);
   }
 
   void setModelo(ModeloDatos modelo) {
@@ -118,6 +120,7 @@ class ModeloProvider extends ChangeNotifier {
     final File file = File(getRoot() + 'modelos.json');
     try {
       await file.writeAsString(json.encode(listaModelosDatos));
+      cambios = false;
     } catch (e) {
       mostrarError(TipoError.escrituraModelos, context);
     }

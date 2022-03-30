@@ -46,7 +46,7 @@ class ExcelExtractor {
       listaHojas.add(hoja);
     }
     bool encontrado = false;
-    for (ArchivoDatos archivo in listaArchivos) {
+    for (ArchivoDatos archivo in AlmacenDatos.listaArchivos) {
       if (listaHojas.containsAll(archivo.listaHojas)) {
         _archivoDatos = archivo;
         encontrado = true;
@@ -67,7 +67,7 @@ class ExcelExtractor {
 
     for (String nombreModelo in _archivoDatos.listaModelos) {
       ModeloDatos modelo =
-          listaModelos.firstWhere((element) => element.nombre == nombreModelo);
+          AlmacenDatos.listaModelos.firstWhere((element) => element.nombre == nombreModelo);
       Sheet hoja = excel[modelo.sheet];
       if (kDebugMode) {
         print(modelo.nombre);

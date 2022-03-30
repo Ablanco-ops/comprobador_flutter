@@ -1,34 +1,26 @@
-import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-
 import 'package:comprobador_flutter/almacen_datos.dart';
 import 'package:comprobador_flutter/common.dart';
 import 'package:comprobador_flutter/providers/modelo_provider.dart';
+import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 import 'modelo_edit_tile.dart';
 
 /* Pantalla para la configuracion de los modelos de datos, obtiene los
 datos y funciones de providers/modelo_provider.dart */
 
-class ConfiguracionModelosScreen extends StatefulWidget {
+class ConfiguracionModelosScreen extends StatelessWidget {
   const ConfiguracionModelosScreen({Key? key}) : super(key: key);
   static const routeName = '/ConfiguracionModelos';
 
   @override
-  State<ConfiguracionModelosScreen> createState() =>
-      _ConfiguracionModelosScreenState();
-}
-
-class _ConfiguracionModelosScreenState
-    extends State<ConfiguracionModelosScreen> {
-  bool _iniciado = false;
-  @override
   Widget build(BuildContext context) {
     final provider = Provider.of<ModeloProvider>(context);
     var display = MediaQuery.of(context).size;
-    if (!_iniciado) { //refresca las listas cada vez que accedemos a pantalla de configuración de modelos
-      provider.refrescarListas();
-      _iniciado = true;
+    if (!provider.iniciado) {
+      //refresca las listas cada vez que accedemos a pantalla de configuración de modelos
+      provider.refrescarListas(context);
+      provider.iniciado = true;
     }
 
     return Scaffold(
@@ -41,7 +33,9 @@ class _ConfiguracionModelosScreenState
               provider.guardarModelos(context);
             }
           }
-
+          provider.cambios = false;
+          provider.iniciado = false;
+          AlmacenDatos.refrescarListas(context);
           Navigator.pop(context);
         }),
         title: const Text('Configuración de Modelos de datos'),
@@ -60,35 +54,41 @@ class _ConfiguracionModelosScreenState
                 width: display.width * 0.3,
                 child: Column(
                   children: [
-                    Text('Modelos de datos',style: Theme.of(context).textTheme.headline4),
+                    Text('Modelos de datos',
+                        style: Theme.of(context).textTheme.headline4),
                     Expanded(
                       child: Row(
-                        children: [ 
+                        children: [
                           Expanded(
                             child: Card(
                               shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(10)),
                               child: ListView.builder(
                                   itemCount: provider.listaModelosDatos.length,
-                                  itemBuilder: (BuildContext context, int index) {
+                                  itemBuilder:
+                                      (BuildContext context, int index) {
                                     return Container(
                                       margin: const EdgeInsets.only(bottom: 5),
                                       child: ListTile(
                                         onTap: (() => provider.setModelo(
                                             provider.listaModelosDatos[index])),
                                         shape: RoundedRectangleBorder(
-                                            borderRadius: BorderRadius.circular(5)),
+                                            borderRadius:
+                                                BorderRadius.circular(5)),
                                         tileColor: Colors.green,
                                         textColor: Colors.white,
-                                        title: Text(
-                                            provider.listaModelosDatos[index].nombre),
+                                        title: Text(provider
+                                            .listaModelosDatos[index].nombre),
                                         trailing: IconButton(
                                           icon: const Icon(
                                             Icons.delete,
                                             color: Colors.white,
                                           ),
-                                          onPressed: () => provider.eliminarModelo(
-                                              listaModelos[index], context),
+                                          onPressed: () =>
+                                              provider.eliminarModelo(
+                                                  provider
+                                                      .listaModelosDatos[index],
+                                                  context),
                                         ),
                                       ),
                                     );
@@ -107,7 +107,8 @@ class _ConfiguracionModelosScreenState
                                   color: Colors.green),
                               const SizedBox(height: 10),
                               IconButton(
-                                  onPressed: () => provider.guardarModelos(context),
+                                  onPressed: () =>
+                                      provider.guardarModelos(context),
                                   icon: const Icon(
                                     Icons.save,
                                     size: 36,
@@ -126,7 +127,10 @@ class _ConfiguracionModelosScreenState
                 width: display.width * 0.4,
                 child: Column(
                   children: [
-                    Text('Configuración del modelo',style: Theme.of(context).textTheme.headline4,),
+                    Text(
+                      'Configuración del modelo',
+                      style: Theme.of(context).textTheme.headline4,
+                    ),
                     Expanded(
                       child: Card(
                         child: SizedBox(
