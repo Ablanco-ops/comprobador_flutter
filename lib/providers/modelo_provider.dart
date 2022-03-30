@@ -1,7 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 
-import 'package:comprobador_flutter/almacen_datos.dart';
+import 'package:comprobador_flutter/datos/almacen_datos.dart';
 import 'package:comprobador_flutter/common.dart';
 import 'package:comprobador_flutter/excepciones.dart';
 import 'package:comprobador_flutter/modelo/modelo_datos.dart';

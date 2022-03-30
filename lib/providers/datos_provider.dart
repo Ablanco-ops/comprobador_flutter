@@ -1,11 +1,11 @@
 import 'dart:io';
 
-import 'package:comprobador_flutter/almacen_datos.dart';
+import 'package:comprobador_flutter/datos/almacen_datos.dart';
 import 'package:comprobador_flutter/common.dart';
 import 'package:comprobador_flutter/exportar_excel.dart';
 import 'package:comprobador_flutter/modelo/entrada_datos.dart';
 import 'package:comprobador_flutter/pdf_extractor.dart';
-import 'package:comprobador_flutter/preferences.dart';
+import 'package:comprobador_flutter/datos/preferences.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
@@ -35,6 +35,8 @@ class DatosProvider extends ChangeNotifier {
   Filtro filtroDatos = Filtro.todo;
 
   String pathExcelExport = '';
+
+  bool iniciado = false;
 
   //Crea una instancia de ExcelExtractor, saca las entradas de datos del excel y el tipo de archivo
   void obtenerDatos(int numWidget, TipoDatos tipoDatos, BuildContext context) {
@@ -182,16 +184,16 @@ class DatosProvider extends ChangeNotifier {
       var match = _listaEntradas2.firstWhereOrNull((element) =>
           (element.identificador == entrada.identificador &&
               element.codProducto == entrada.codProducto));
-      if(match !=null){
+      if (match != null) {
         if (entrada.cantidad.abs() == match.cantidad.abs()) {
-        entrada.encontrado = Filtro.correcto;
-        match.encontrado = Filtro.correcto;
-      } else {
-        entrada.encontrado = Filtro.incorrecto;
-        match.encontrado = Filtro.incorrecto;
+          entrada.encontrado = Filtro.correcto;
+          match.encontrado = Filtro.correcto;
+        } else {
+          entrada.encontrado = Filtro.incorrecto;
+          match.encontrado = Filtro.incorrecto;
+        }
       }
-      }
-      
+
       noEncontrados = _listaEntradas1
               .where((element) => element.encontrado == Filtro.noEncontrado)
               .length +

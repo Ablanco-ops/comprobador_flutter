@@ -1,4 +1,4 @@
-import 'package:comprobador_flutter/almacen_datos.dart';
+import 'package:comprobador_flutter/datos/almacen_datos.dart';
 import 'package:comprobador_flutter/common.dart';
 import 'package:comprobador_flutter/providers/modelo_provider.dart';
 import 'package:flutter/material.dart';

@@ -7,7 +7,7 @@ import 'package:comprobador_flutter/modelo/modelo_datos.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 
-import 'common.dart';
+import '../common.dart';
 
 class AlmacenDatos {
   static String pathModelos = '';

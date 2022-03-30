@@ -5,9 +5,8 @@ import 'package:comprobador_flutter/providers/datos_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
-import '../almacen_datos.dart';
+import '../datos/almacen_datos.dart';
 import 'datos_widget.dart';
-
 
 /* Pantalla principal en la que se muestran los datos comparados, utiliza providers/datos_provider.dart
  */
@@ -18,14 +17,17 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final display = MediaQuery.of(context).size;
     final datos = Provider.of<DatosProvider>(context);
-    AlmacenDatos.refrescarListas(context);
+    if (!datos.iniciado) {
+      AlmacenDatos.refrescarListas(context);
+      datos.iniciado = true;
+    }
     String textoBusqueda = '';
 
     return Scaffold(
       appBar: AppBar(title: const Text('Comparador de archivos')),
 
       // Desde el drawer podemos acceder a la configuración
-      drawer: Drawer( 
+      drawer: Drawer(
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -81,12 +83,17 @@ class HomeScreen extends StatelessWidget {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Image.asset('assets/logo.png',fit: BoxFit.contain,height: display.height*0.1,width: display.width*0.2,),
-                  SizedBox(height: display.height*0.05),
+                  Image.asset(
+                    'assets/logo.png',
+                    fit: BoxFit.contain,
+                    height: display.height * 0.1,
+                    width: display.width * 0.2,
+                  ),
+                  SizedBox(height: display.height * 0.05),
                   ElevatedButton(
                       onPressed: () => datos.cruzarDatos(context),
                       child: const Text('Cruzar datos')),
-                      // SizedBox(height: display.height*0.02),
+                  // SizedBox(height: display.height*0.02),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
