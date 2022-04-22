@@ -7,7 +7,7 @@ double toPrecision(int fractionDigits, double numero) {
 }
 
 enum Filtro { todo, noEncontrado, correcto, incorrecto }
-enum TipoDatos { pdf, xlsx }
+enum TipoDatos { csv, xlsx }
 enum CamposModelo {
   nombre,
   primeraFila,

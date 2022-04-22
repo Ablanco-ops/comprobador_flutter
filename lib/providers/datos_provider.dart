@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:comprobador_flutter/csv_extractor.dart';
 import 'package:comprobador_flutter/datos/almacen_datos.dart';
 import 'package:comprobador_flutter/common.dart';
 import 'package:comprobador_flutter/exportar_excel.dart';
@@ -42,8 +43,8 @@ class DatosProvider extends ChangeNotifier {
   void obtenerDatos(int numWidget, TipoDatos tipoDatos, BuildContext context) {
     File path = numWidget == 1 ? _path1 : _path2;
     List<EntradaDatos> listaEntradas = [];
-    if (tipoDatos == TipoDatos.pdf) {
-      listaEntradas.addAll(leerPdf(path, context));
+    if (tipoDatos == TipoDatos.csv) {
+      leerCsv(path, context);
     } else {
       if (kDebugMode) {
         print('archivo excel $path');
@@ -123,14 +124,14 @@ class DatosProvider extends ChangeNotifier {
 
   Future<void> seleccionarArchivo(int numWidget, BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx']);
+        .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx','csv']);
     if (result != null) {
       numWidget == 1
           ? _path1 = File(result.files.single.path!)
           : _path2 = File(result.files.single.path!);
 
-      if (result.files.single.extension == 'pdf') {
-        obtenerDatos(numWidget, TipoDatos.pdf, context);
+      if (result.files.single.extension == 'csv') {
+        obtenerDatos(numWidget, TipoDatos.csv, context);
       } else {
         obtenerDatos(numWidget, TipoDatos.xlsx, context);
       }
