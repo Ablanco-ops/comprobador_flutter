@@ -35,6 +35,9 @@ class ModeloProvider extends ChangeNotifier {
       case CamposModelo.codProductoColumna:
         modeloDatos!.codProductoColumna = valor;
         break;
+      case CamposModelo.ciudadColumna:
+        modeloDatos!.ciudad = valor;
+        break;
       case CamposModelo.comprobante:
         var comprobante = valor.split(':');
         modeloDatos!.comprobante = {comprobante[0]: comprobante[1]};
@@ -78,7 +81,7 @@ class ModeloProvider extends ChangeNotifier {
         pattern = RegExp(r'^\d{1,2}$');
         break;
       default:
-        pattern = RegExp(r'^[A-Z]$');
+        pattern = RegExp(r'^[A-Z 0-9]{1,2}$');
     }
     if (pattern.hasMatch(valor)) {
       _edtiModelo(campo, valor);

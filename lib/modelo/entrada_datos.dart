@@ -3,6 +3,7 @@ import 'package:comprobador_flutter/common.dart';
 // Clase que describe cada entrada de datos
 class EntradaDatos {
   final String identificador;
+  final String? ciudad;
   final String? codProducto;
   double cantidad;
   final String modelo;
@@ -10,7 +11,8 @@ class EntradaDatos {
   Filtro encontrado = Filtro.noEncontrado;
   EntradaDatos({
     required this.identificador,
-     this.codProducto,
+    this.ciudad,
+    this.codProducto,
     required this.cantidad,
     required this.modelo,
     required this.fecha,

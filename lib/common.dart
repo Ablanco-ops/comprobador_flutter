@@ -14,6 +14,7 @@ enum CamposModelo {
   idColumna,
   codProductoColumna,
   codProducto,
+  ciudadColumna,
   cantidadColumna,
   sheet,
   fecha,

@@ -134,32 +134,41 @@ class ConfiguracionModelosScreen extends StatelessWidget {
                     Expanded(
                       child: Card(
                         child: SizedBox(
-                          child: Column(
-                            children: const [
-                              ModeloEditTile(
-                                  titulo: 'Nombre', campo: CamposModelo.nombre),
-                              ModeloEditTile(
-                                  titulo: 'Primera Fila',
-                                  campo: CamposModelo.primeraFila),
-                              ModeloEditTile(
-                                  titulo: 'Columna Id',
-                                  campo: CamposModelo.idColumna),
-                              ModeloEditTile(
-                                  titulo: 'Columna Cod Producto',
-                                  campo: CamposModelo.codProductoColumna),
-                              ModeloEditTile(
-                                  titulo: 'Columna Fecha',
-                                  campo: CamposModelo.fecha),
-                              ModeloEditTile(
-                                  titulo: 'Cod Producto',
-                                  campo: CamposModelo.codProducto),
-                              ModeloEditTile(
-                                  titulo: 'Hoja Excel',
-                                  campo: CamposModelo.sheet),
-                              ModeloEditTile(
-                                  titulo: 'Comprobante',
-                                  campo: CamposModelo.comprobante),
-                            ],
+                          child: SingleChildScrollView(
+                            controller: ScrollController(),
+                            child: Column(
+                              children: const [
+                                ModeloEditTile(
+                                    titulo: 'Nombre', campo: CamposModelo.nombre),
+                                ModeloEditTile(
+                                    titulo: 'Primera Fila',
+                                    campo: CamposModelo.primeraFila),
+                                ModeloEditTile(
+                                    titulo: 'Columna Id',
+                                    campo: CamposModelo.idColumna),
+                                    ModeloEditTile(
+                                    titulo: 'Columna Ciudad',
+                                    campo: CamposModelo.ciudadColumna),
+                                ModeloEditTile(
+                                    titulo: 'Columna Cod Producto',
+                                    campo: CamposModelo.codProductoColumna),
+                                ModeloEditTile(
+                                    titulo: 'Cod Producto',
+                                    campo: CamposModelo.codProducto),
+                                ModeloEditTile(
+                                    titulo: 'Columna Cantidad',
+                                    campo: CamposModelo.cantidadColumna),
+                                ModeloEditTile(
+                                    titulo: 'Columna Fecha',
+                                    campo: CamposModelo.fecha),
+                                ModeloEditTile(
+                                    titulo: 'Hoja Excel',
+                                    campo: CamposModelo.sheet),
+                                ModeloEditTile(
+                                    titulo: 'Comprobante',
+                                    campo: CamposModelo.comprobante),
+                              ],
+                            ),
                           ),
                         ),
                       ),

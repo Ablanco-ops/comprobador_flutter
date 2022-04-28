@@ -4,19 +4,22 @@ part 'modelo_datos.g.dart';
 // Modelo de datos para buscar las entradas en una hoja de excel
 @JsonSerializable(explicitToJson: true)
 class ModeloDatos {
-   String nombre;
-   int primeraFila;
-   String idColumna;
-   String? codProductoColumna;
-   String? codProducto;
-   String cantidadColumna;
-   String sheet;
-   String fecha;
-   Map<String, String> comprobante;
+  String nombre;
+  int primeraFila;
+  String idColumna;
+  String? ciudad;
+  String? codProductoColumna;
+  String? codProducto;
+  String cantidadColumna;
+  String sheet;
+  String fecha;
+  Map<String, String> comprobante;
+  Map<String, String>? dictCiudades;
   ModeloDatos({
     required this.nombre,
     required this.primeraFila,
     required this.idColumna,
+    this.ciudad,
     this.codProductoColumna,
     this.codProducto,
     required this.cantidadColumna,

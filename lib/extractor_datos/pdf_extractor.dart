@@ -5,8 +5,8 @@ import 'package:comprobador_flutter/excepciones.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:syncfusion_flutter_pdf/pdf.dart';
 
-import 'common.dart';
-import 'modelo/entrada_datos.dart';
+import '../common.dart';
+import '../modelo/entrada_datos.dart';
 
 List<EntradaDatos> leerPdf(File file, BuildContext context) {
   final reId = RegExp(r"[0-9]{2}-[0-9]{5}");

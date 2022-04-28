@@ -4,7 +4,7 @@ class EntradaExcel {
   final DateTime? fecha;
   final double cantidad1;
   final double cantidad2;
-  
+
   EntradaExcel({
     required this.identificador,
     this.codProducto,

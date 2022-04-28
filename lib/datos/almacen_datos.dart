@@ -43,12 +43,12 @@ class AlmacenDatos {
         fecha: 'C'),
     ModeloDatos(
         nombre: 'Chep Americano',
-        primeraFila: 2,
+        primeraFila: 7,
         idColumna: 'F',
         codProducto: '00001',
         cantidadColumna: 'G',
-        sheet: 'SALIDA CHEP - PALETINA',
-        comprobante: {'A1': 'Año', 'B1': 'Mes'},
+        sheet: 'SALIDA CHEP AMERICANO',
+        comprobante: {'A1': 'Producto'},
         fecha: 'C'),
     ModeloDatos(
         nombre: 'Diarios Intrastat',

@@ -2,44 +2,44 @@ import 'dart:io';
 
 import 'package:comprobador_flutter/datos/almacen_datos.dart';
 import 'package:comprobador_flutter/excepciones.dart';
+import 'package:comprobador_flutter/extractor_datos/extractor.dart';
 import 'package:comprobador_flutter/modelo/archivo_datos.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
 
-import 'common.dart';
-import 'modelo/entrada_datos.dart';
-import 'modelo/modelo_datos.dart';
+import '../common.dart';
+import '../modelo/entrada_datos.dart';
+import '../modelo/modelo_datos.dart';
 
-class ExcelExtractor {
+class ExcelExtractor implements Extractor {
   final File _file;
 
-  late Excel excel;
+  late Excel _excel;
   late ArchivoDatos _archivoDatos;
 
   ExcelExtractor(this._file);
 
-  List<EntradaDatos> procesarExcel(BuildContext context) {
-    getExcel(context);
-    if (getArchivo(context)) {
-      return leerExcel(context);
+  @override
+  List<EntradaDatos> procesarArchivo(BuildContext context) {
+    try {
+      var bytes = _file.readAsBytesSync();
+      _excel = Excel.decodeBytes(bytes);
+    } catch (e) {
+      mostrarError(TipoError.lecturaExcel, context);
+    }
+    
+    if (getArchivoDatos(context)) {
+      return leerArchivo(context);
     } else {
       return [];
     }
   }
 
-  void getExcel(BuildContext context) {
-    try {
-      var bytes = _file.readAsBytesSync();
-      excel = Excel.decodeBytes(bytes);
-    } catch (e) {
-      mostrarError(TipoError.lecturaExcel, context);
-    }
-  }
-
-  bool getArchivo(BuildContext context) {
+  @override
+  bool getArchivoDatos(BuildContext context) {
     Set<String> listaHojas = {};
-    for (var hoja in excel.tables.keys) {
+    for (var hoja in _excel.tables.keys) {
       if (kDebugMode) {
         print(hoja);
       }
@@ -61,14 +61,14 @@ class ExcelExtractor {
     }
     return encontrado;
   }
-
-  List<EntradaDatos> leerExcel(BuildContext context) {
+  @override
+  List<EntradaDatos> leerArchivo(BuildContext context) {
     List<EntradaDatos> listaEntradas = [];
 
     for (String nombreModelo in _archivoDatos.listaModelos) {
       ModeloDatos modelo =
           AlmacenDatos.listaModelos.firstWhere((element) => element.nombre == nombreModelo);
-      Sheet hoja = excel[modelo.sheet];
+      Sheet hoja = _excel[modelo.sheet];
       if (kDebugMode) {
         print(modelo.nombre);
       }
@@ -77,7 +77,7 @@ class ExcelExtractor {
         if (hoja.cell(CellIndex.indexByString(valor)).value !=
             modelo.comprobante[valor]) {
           if (kDebugMode) {
-            print('comprobante rroneo');
+            print('comprobante erroneo');
           }
           mostrarExcepcion(
               TipoExcepcion.datosIncorrectos, modelo.sheet, context);
@@ -143,7 +143,8 @@ class ExcelExtractor {
               element.identificador == id &&
               element.codProducto == codProducto)) {
             var entrada = listaEntradas
-                .firstWhere((element) => element.identificador == id);
+                .firstWhere((element) => element.identificador == id &&
+              element.codProducto == codProducto);
             entrada.cantidad = toPrecision(2, entrada.cantidad + cantidad);
           } else {
             if (codProducto == '') {

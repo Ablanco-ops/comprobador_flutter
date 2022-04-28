@@ -36,20 +36,24 @@ class _EditTileState extends State<ModeloEditTile> {
     final provider = Provider.of<ModeloProvider>(context);
     String titulo() {
       switch (widget.campo) {
-        case (CamposModelo.cantidadColumna):
-          return provider.modeloDatos?.cantidadColumna ?? '';
+        case (CamposModelo.nombre):
+          return provider.modeloDatos?.nombre ?? '';
+        case (CamposModelo.idColumna):
+          return provider.modeloDatos?.idColumna ?? '';
         case (CamposModelo.codProducto):
           return provider.modeloDatos?.codProducto ?? '';
         case (CamposModelo.codProductoColumna):
           return provider.modeloDatos?.codProductoColumna ?? '';
+        case (CamposModelo.cantidadColumna):
+          return provider.modeloDatos?.cantidadColumna ?? '';
+        case (CamposModelo.ciudadColumna):
+          return provider.modeloDatos?.ciudad ?? '';
+
         case (CamposModelo.comprobante):
           return provider.modeloDatos?.comprobante.toString() ?? '';
         case (CamposModelo.fecha):
           return provider.modeloDatos?.fecha ?? '';
-        case (CamposModelo.idColumna):
-          return provider.modeloDatos?.idColumna ?? '';
-        case (CamposModelo.nombre):
-          return provider.modeloDatos?.nombre ?? '';
+
         case (CamposModelo.primeraFila):
           return provider.modeloDatos?.primeraFila.toString() ?? '';
         case (CamposModelo.sheet):

@@ -1,19 +1,19 @@
 import 'dart:io';
 
-import 'package:comprobador_flutter/csv_extractor.dart';
-import 'package:comprobador_flutter/datos/almacen_datos.dart';
+import 'package:collection/collection.dart';
 import 'package:comprobador_flutter/common.dart';
-import 'package:comprobador_flutter/exportar_excel.dart';
-import 'package:comprobador_flutter/modelo/entrada_datos.dart';
-import 'package:comprobador_flutter/pdf_extractor.dart';
+import 'package:comprobador_flutter/extractor_datos/csv_extractor.dart';
+import 'package:comprobador_flutter/datos/almacen_datos.dart';
 import 'package:comprobador_flutter/datos/preferences.dart';
+import 'package:comprobador_flutter/exportar_excel.dart';
+import 'package:comprobador_flutter/extractor_datos/extractor.dart';
+import 'package:comprobador_flutter/modelo/entrada_datos.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
-import 'package:collection/collection.dart';
 
 import '../common.dart';
-import '../excel_extractor.dart';
+import '../extractor_datos/excel_extractor.dart';
 
 // Proveedor de datos de la pantalla principal home_screendart
 class DatosProvider extends ChangeNotifier {
@@ -43,22 +43,22 @@ class DatosProvider extends ChangeNotifier {
   void obtenerDatos(int numWidget, TipoDatos tipoDatos, BuildContext context) {
     File path = numWidget == 1 ? _path1 : _path2;
     List<EntradaDatos> listaEntradas = [];
+    Extractor extractor;
     if (tipoDatos == TipoDatos.csv) {
-      leerCsv(path, context);
+      extractor = CsvExtractor(path);
     } else {
-      if (kDebugMode) {
-        print('archivo excel $path');
-      }
-      ExcelExtractor extractor = ExcelExtractor(path);
-      listaEntradas = extractor.procesarExcel(context);
-      var archivoDatos = AlmacenDatos.listaArchivos.firstWhere((archivo) {
-        return archivo.listaModelos
-            .any((modelo) => modelo == listaEntradas[0].modelo);
-      });
-      numWidget == 1
-          ? tipoArchivo1 = archivoDatos.nombre
-          : tipoArchivo2 = archivoDatos.nombre;
+      extractor = ExcelExtractor(path);
     }
+
+    listaEntradas = extractor.procesarArchivo(context);
+    var archivoDatos = AlmacenDatos.listaArchivos.firstWhere((archivo) {
+      return archivo.listaModelos
+          .any((modelo) => modelo == listaEntradas[0].modelo);
+    });
+    numWidget == 1
+        ? tipoArchivo1 = archivoDatos.nombre
+        : tipoArchivo2 = archivoDatos.nombre;
+
     listaEntradas.sort((a, b) => a.identificador.compareTo(b.identificador));
     if (numWidget == 1) {
       _listaEntradas1 = listaEntradas;
@@ -124,7 +124,7 @@ class DatosProvider extends ChangeNotifier {
 
   Future<void> seleccionarArchivo(int numWidget, BuildContext context) async {
     FilePickerResult? result = await FilePicker.platform
-        .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx','csv']);
+        .pickFiles(type: FileType.custom, allowedExtensions: ['xlsx', 'csv']);
     if (result != null) {
       numWidget == 1
           ? _path1 = File(result.files.single.path!)
