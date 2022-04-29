@@ -58,10 +58,9 @@ class CsvExtractor implements Extractor {
                         .toString());
         if (entradaExistente == null) {
           listaEntradas.add(EntradaDatos(
-              identificador: entrada[int.parse(modelo.idColumna) - 1].toString(),
-              ciudad: modelo.ciudad == null
-                  ? null
-                  : entrada[int.parse(modelo.ciudad!) - 1],
+              identificador:
+                  entrada[int.parse(modelo.idColumna) - 1].toString(),
+              ciudad: modelo.ciudad == null ? null : getCiudad(modelo, entrada),
               codProducto: modelo.codProducto == null
                   ? null
                   : entrada[int.parse(modelo.codProductoColumna!) - 1]
@@ -80,14 +79,13 @@ class CsvExtractor implements Extractor {
     return listaEntradas;
   }
 
-  String getId(List<dynamic> entrada, ModeloDatos modelo) {
-    String res = '';
-    List<String> listaColumnas = modelo.idColumna.split(',');
-    print(listaColumnas);
-    for (String col in listaColumnas) {
-      res = res + entrada[int.parse(col) - 1];
+  String getCiudad(ModeloDatos modelo, List<dynamic> entrada) {
+    try {
+      return modelo.dictCiudades![entrada[int.parse(modelo.ciudad!) - 1]]!;
+    } catch (e) {
+      return entrada[int.parse(modelo.ciudad!) - 1];
+      // TODO: implementar excepcion;
     }
-    print(res);
-    return res;
+
   }
 }

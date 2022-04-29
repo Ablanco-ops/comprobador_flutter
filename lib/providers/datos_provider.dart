@@ -9,8 +9,7 @@ import 'package:comprobador_flutter/exportar_excel.dart';
 import 'package:comprobador_flutter/extractor_datos/extractor.dart';
 import 'package:comprobador_flutter/modelo/entrada_datos.dart';
 import 'package:file_picker/file_picker.dart';
-import 'package:flutter/cupertino.dart';
-import 'package:flutter/foundation.dart';
+import 'package:flutter/material.dart';
 
 import '../common.dart';
 import '../extractor_datos/excel_extractor.dart';
