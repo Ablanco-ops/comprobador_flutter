@@ -37,6 +37,7 @@ class DatosProvider extends ChangeNotifier {
   String pathExcelExport = '';
 
   bool iniciado = false;
+  bool multiple = false;
 
   //Crea una instancia de ExcelExtractor, saca las entradas de datos del excel y el tipo de archivo
   void obtenerDatos(int numWidget, TipoDatos tipoDatos, BuildContext context) {
@@ -184,6 +185,11 @@ class DatosProvider extends ChangeNotifier {
       var match = _listaEntradas2.firstWhereOrNull((element) =>
           (element.identificador == entrada.identificador &&
               element.codProducto == entrada.codProducto));
+      
+      match ??= _listaEntradas2.firstWhereOrNull((element) =>
+          (element.ciudad == entrada.ciudad &&
+              element.codProducto == entrada.codProducto &&
+              element.fecha == entrada.fecha));
       if (match != null) {
         if (entrada.cantidad.abs() == match.cantidad.abs()) {
           entrada.encontrado = Filtro.correcto;
@@ -220,8 +226,15 @@ class DatosProvider extends ChangeNotifier {
         _listaEntradas2Filtrado.isEmpty) {
       customSnack('No hay datos cargados', context);
     } else {
-      ExportarExcel.crearExcel(_listaEntradas1Filtrado, _listaEntradas2Filtrado,
-          tipoArchivo1, tipoArchivo2, pathExcelExport, filtroDatos, context);
+      ExportarExcel export = ExportarExcel(
+          listaEntradas1: _listaEntradas1Filtrado,
+          listaEntradas2: _listaEntradas2Filtrado,
+          modelo1: tipoArchivo1,
+          modelo2: tipoArchivo2,
+          path: pathExcelExport,
+          filtro: filtroDatos,
+          context: context);
+      export.exportar();
       customSnack('Excel creado en: $pathExcelExport', context);
     }
   }

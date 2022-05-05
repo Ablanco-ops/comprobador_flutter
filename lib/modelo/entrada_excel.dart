@@ -1,15 +1,17 @@
 class EntradaExcel {
-  final String identificador;
-  final String? codProducto;
+  final String identificador1;
+  String identificador2;
   final DateTime? fecha;
-  final double cantidad1;
-  final double cantidad2;
+  final String? ciudad;
+  Map<String,double> cantidad1;
+  Map<String,double> cantidad2;
 
   EntradaExcel({
-    required this.identificador,
-    this.codProducto,
+    required this.identificador1,
+    required this.identificador2,
     this.fecha,
+    this.ciudad,
     required this.cantidad1,
-    required this.cantidad2,
+    required this.cantidad2
   });
 }

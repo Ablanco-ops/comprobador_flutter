@@ -7,6 +7,7 @@ import 'package:comprobador_flutter/modelo/archivo_datos.dart';
 import 'package:excel/excel.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/foundation.dart';
+import 'package:collection/collection.dart';
 
 import '../common.dart';
 import '../modelo/entrada_datos.dart';
@@ -28,7 +29,7 @@ class ExcelExtractor implements Extractor {
     } catch (e) {
       mostrarError(TipoError.lecturaExcel, context);
     }
-    
+
     if (getArchivoDatos(context)) {
       return leerArchivo(context);
     } else {
@@ -61,18 +62,19 @@ class ExcelExtractor implements Extractor {
     }
     return encontrado;
   }
+
   @override
   List<EntradaDatos> leerArchivo(BuildContext context) {
     List<EntradaDatos> listaEntradas = [];
 
     for (String nombreModelo in _archivoDatos.listaModelos) {
-      ModeloDatos modelo =
-          AlmacenDatos.listaModelos.firstWhere((element) => element.nombre == nombreModelo);
+      ModeloDatos modelo = AlmacenDatos.listaModelos
+          .firstWhere((element) => element.nombre == nombreModelo);
       Sheet hoja = _excel[modelo.sheet];
       if (kDebugMode) {
         print(modelo.nombre);
       }
-      String fecha = '';
+
       for (String valor in modelo.comprobante.keys) {
         if (hoja.cell(CellIndex.indexByString(valor)).value !=
             modelo.comprobante[valor]) {
@@ -84,9 +86,13 @@ class ExcelExtractor implements Extractor {
           return listaEntradas;
         }
       }
+      String? codProducto;
+      String id = '';
+      String fecha = '';
+      double cantidad = 0;
+      String? ciudad;
 
       for (int i = modelo.primeraFila; i <= hoja.maxRows; i++) {
-        String? codProducto;
         if (modelo.codProducto != null) {
           codProducto = modelo.codProducto!;
         }
@@ -102,13 +108,13 @@ class ExcelExtractor implements Extractor {
                 .value;
           }
         }
-        if (hoja
-                .cell(CellIndex.indexByString(modelo.idColumna + i.toString()))
-                .value !=
-            null) {
-          String id = hoja
-              .cell(CellIndex.indexByString(modelo.idColumna + i.toString()))
-              .value;
+        String cellId = hoja
+            .cell(CellIndex.indexByString(modelo.idColumna + i.toString()))
+            .value
+            .toString();
+
+        if (modelo.productos == null) {
+          id = cellId;
           if (hoja
                   .cell(CellIndex.indexByString(modelo.fecha + i.toString()))
                   .value !=
@@ -118,7 +124,7 @@ class ExcelExtractor implements Extractor {
                 .value
                 .toString();
           }
-          double cantidad = 0;
+
           if (hoja
                   .cell(CellIndex.indexByString(
                       modelo.cantidadColumna + i.toString()))
@@ -134,25 +140,11 @@ class ExcelExtractor implements Extractor {
               mostrarExcepcion(TipoExcepcion.errorNumerico,
                   '${modelo.cantidadColumna}:$i', context);
             }
-          }
-
-          // if (kDebugMode) {
-          //   print(fecha + '|' + id + '|' + cantidad.toString());
-          // }
-          if (listaEntradas.any((element) =>
-              element.identificador == id &&
-              element.codProducto == codProducto)) {
-            var entrada = listaEntradas
-                .firstWhere((element) => element.identificador == id &&
-              element.codProducto == codProducto);
-            entrada.cantidad = toPrecision(2, entrada.cantidad + cantidad);
-          } else {
-            if (codProducto == '') {
-              listaEntradas.add(EntradaDatos(
-                  identificador: id,
-                  cantidad: toPrecision(2, cantidad),
-                  modelo: modelo.nombre,
-                  fecha: fecha));
+            var entrada = listaEntradas.firstWhereOrNull((element) =>
+                element.identificador == id &&
+                element.codProducto == codProducto);
+            if (entrada != null) {
+              entrada.cantidad = toPrecision(2, entrada.cantidad + cantidad);
             } else {
               listaEntradas.add(EntradaDatos(
                   identificador: id,
@@ -160,6 +152,48 @@ class ExcelExtractor implements Extractor {
                   cantidad: toPrecision(2, cantidad),
                   modelo: modelo.nombre,
                   fecha: fecha));
+            }
+          }
+        } else {
+          if (RegExp(r'[0-3][0-9]\.[0-1][0-9]\.[0-9]{4}').hasMatch(cellId)) {
+            print(cellId);
+            fecha = cellId;
+          } else if (cellId.contains('DIA') && !cellId.contains('DEVO')) {
+            ciudad = cellId;
+          } else if (cellId.contains('-')) {
+            id = cellId;
+            for (String columna in modelo.productos!.keys) {
+              if (hoja
+                      .cell(CellIndex.indexByString(
+                          columna + i.toString()))
+                      .value !=
+                  null) {
+                try {
+                  cantidad = (hoja
+                          .cell(CellIndex.indexByString(
+                              columna + i.toString()))
+                          .value)
+                      .toDouble();
+                } catch (e) {
+                  mostrarExcepcion(TipoExcepcion.errorNumerico,
+                      '${modelo.cantidadColumna}:$i', context);
+                }
+              
+              var entrada = listaEntradas.firstWhereOrNull((element) =>
+                  element.identificador == id &&
+                  element.codProducto == codProducto);
+              if (entrada != null) {
+                entrada.cantidad = toPrecision(2, entrada.cantidad + cantidad);
+              } else {
+                listaEntradas.add(EntradaDatos(
+                    identificador: id,
+                    ciudad: ciudad,
+                    codProducto: modelo.productos![columna],
+                    cantidad: toPrecision(2, cantidad),
+                    modelo: modelo.nombre,
+                    fecha: fecha));
+              }
+            }
             }
           }
         }

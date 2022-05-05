@@ -15,6 +15,7 @@ class ModeloDatos {
   String fecha;
   Map<String, String> comprobante;
   Map<String, String>? dictCiudades;
+  Map<String, String>? productos;
   ModeloDatos({
     required this.nombre,
     required this.primeraFila,

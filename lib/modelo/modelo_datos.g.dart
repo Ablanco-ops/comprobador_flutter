@@ -17,7 +17,11 @@ ModeloDatos _$ModeloDatosFromJson(Map<String, dynamic> json) => ModeloDatos(
       sheet: json['sheet'] as String,
       fecha: json['fecha'] as String,
       comprobante: Map<String, String>.from(json['comprobante'] as Map),
-    )..dictCiudades = (json['dictCiudades'] as Map<String, dynamic>?)?.map(
+    )
+      ..dictCiudades = (json['dictCiudades'] as Map<String, dynamic>?)?.map(
+        (k, e) => MapEntry(k, e as String),
+      )
+      ..productos = (json['productos'] as Map<String, dynamic>?)?.map(
         (k, e) => MapEntry(k, e as String),
       );
 
@@ -34,4 +38,5 @@ Map<String, dynamic> _$ModeloDatosToJson(ModeloDatos instance) =>
       'fecha': instance.fecha,
       'comprobante': instance.comprobante,
       'dictCiudades': instance.dictCiudades,
+      'productos': instance.productos,
     };
