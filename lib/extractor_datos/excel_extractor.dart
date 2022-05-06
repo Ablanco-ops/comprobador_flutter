@@ -158,42 +158,45 @@ class ExcelExtractor implements Extractor {
           if (RegExp(r'[0-3][0-9]\.[0-1][0-9]\.[0-9]{4}').hasMatch(cellId)) {
             print(cellId);
             fecha = cellId;
-          } else if (cellId.contains('DIA') && !cellId.contains('DEVO')) {
+          } else if (cellId.contains('DIA')) {
             ciudad = cellId;
           } else if (cellId.contains('-')) {
             id = cellId;
             for (String columna in modelo.productos!.keys) {
               if (hoja
-                      .cell(CellIndex.indexByString(
-                          columna + i.toString()))
+                      .cell(CellIndex.indexByString(columna + i.toString()))
                       .value !=
                   null) {
                 try {
                   cantidad = (hoja
-                          .cell(CellIndex.indexByString(
-                              columna + i.toString()))
+                          .cell(CellIndex.indexByString(columna + i.toString()))
                           .value)
                       .toDouble();
                 } catch (e) {
                   mostrarExcepcion(TipoExcepcion.errorNumerico,
                       '${modelo.cantidadColumna}:$i', context);
                 }
-              
-              var entrada = listaEntradas.firstWhereOrNull((element) =>
-                  element.identificador == id &&
-                  element.codProducto == codProducto);
-              if (entrada != null) {
-                entrada.cantidad = toPrecision(2, entrada.cantidad + cantidad);
-              } else {
-                listaEntradas.add(EntradaDatos(
-                    identificador: id,
-                    ciudad: ciudad,
-                    codProducto: modelo.productos![columna],
-                    cantidad: toPrecision(2, cantidad),
-                    modelo: modelo.nombre,
-                    fecha: fecha));
+
+                var entrada = listaEntradas.firstWhereOrNull((element) =>
+                    element.fecha == fecha &&
+                    element.ciudad == ciudad &&
+                    element.codProducto == modelo.productos![columna]);
+                print(entrada);
+                if (entrada != null) {
+                  print(entrada.cantidad);
+                  entrada.cantidad =
+                      toPrecision(2, entrada.cantidad + cantidad);
+                  print(entrada.cantidad);
+                } else {
+                  listaEntradas.add(EntradaDatos(
+                      identificador: id,
+                      ciudad: ciudad,
+                      codProducto: modelo.productos![columna],
+                      cantidad: toPrecision(2, cantidad),
+                      modelo: modelo.nombre,
+                      fecha: fecha));
+                }
               }
-            }
             }
           }
         }

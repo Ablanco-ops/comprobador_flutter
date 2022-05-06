@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'dart:io';
 
 import 'package:comprobador_flutter/datos/almacen_datos.dart';
+import 'package:comprobador_flutter/excepciones.dart';
 import 'package:comprobador_flutter/extractor_datos/extractor.dart';
 import 'package:comprobador_flutter/modelo/entrada_datos.dart';
 import 'package:comprobador_flutter/modelo/modelo_datos.dart';
@@ -28,16 +29,21 @@ class CsvExtractor implements Extractor {
   @override
   bool getArchivoDatos(BuildContext context) {
     bool encontrado = false;
-    final raw = const Utf8Decoder(allowMalformed: true)
-        .convert(file.readAsBytesSync())
-        .replaceAll('�', '');
-    print(raw);
-    entradasRaw = const CsvToListConverter().convert(raw, fieldDelimiter: ';');
-    for (ArchivoDatos archivo in AlmacenDatos.listaArchivos) {
-      if (entradasRaw[0][0].contains(archivo.listaHojas.first)) {
-        _archivoDatos = archivo;
-        encontrado = true;
+    try {
+      final raw = const Utf8Decoder(allowMalformed: true)
+          .convert(file.readAsBytesSync())
+          .replaceAll('�', '');
+      print(raw);
+      entradasRaw =
+          const CsvToListConverter().convert(raw, fieldDelimiter: ';');
+      for (ArchivoDatos archivo in AlmacenDatos.listaArchivos) {
+        if (entradasRaw[0][0].contains(archivo.listaHojas.first)) {
+          _archivoDatos = archivo;
+          encontrado = true;
+        }
       }
+    } catch (e) {
+      mostrarError(TipoError.lecturaExcel, context);
     }
     return encontrado;
   }
@@ -52,7 +58,8 @@ class CsvExtractor implements Extractor {
       if (index >= modelo.primeraFila) {
         EntradaDatos? entradaExistente = listaEntradas.firstWhereOrNull(
             (element) =>
-                element.identificador == entrada[0].toString() &&
+                element.ciudad == getCiudad(modelo, entrada) &&
+                element.fecha == entrada[int.parse(modelo.fecha) - 1] &&
                 element.codProducto ==
                     entrada[int.parse(modelo.codProductoColumna!) - 1]
                         .toString());
@@ -83,9 +90,8 @@ class CsvExtractor implements Extractor {
     try {
       return modelo.dictCiudades![entrada[int.parse(modelo.ciudad!) - 1]]!;
     } catch (e) {
+      if (!entrada[int.parse(modelo.ciudad!) - 1].contains('DEVO')) {}
       return entrada[int.parse(modelo.ciudad!) - 1];
-      // TODO: implementar excepcion;
     }
-
   }
 }

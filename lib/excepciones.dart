@@ -58,7 +58,7 @@ void mostrarExcepcion(TipoExcepcion tipoExcepcion,String valor, BuildContext con
 void mostrarError(TipoError tipoError, BuildContext context) {
   switch (tipoError) {
     case TipoError.lecturaExcel:
-      _customAlert('Error de lectura', 'Error al leer excel', context);
+      _customAlert('Error de lectura', 'Error al leer archivo', context);
       break;
     case TipoError.lecturaModelos:
       _customAlert('Error de lectura', 'Error al leer el archivo de configuración de modelos', context);
