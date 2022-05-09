@@ -233,7 +233,9 @@ class DatosProvider extends ChangeNotifier {
           modelo2: tipoArchivo2,
           path: pathExcelExport,
           filtro: filtroDatos,
-          context: context);
+          context: context,
+          file1: _path1.path,
+          file2: _path2.path);
       export.exportar();
       customSnack('Excel creado en: $pathExcelExport', context);
     }

@@ -18,15 +18,20 @@ class ExportarExcel {
   final String path;
   final Filtro filtro;
   final BuildContext context;
+  final String file1;
+  final String file2;
 
-  ExportarExcel(
-      {required this.listaEntradas1,
-      required this.listaEntradas2,
-      required this.modelo1,
-      required this.modelo2,
-      required this.path,
-      required this.filtro,
-      required this.context});
+  ExportarExcel({
+    required this.listaEntradas1,
+    required this.listaEntradas2,
+    required this.modelo1,
+    required this.modelo2,
+    required this.path,
+    required this.filtro,
+    required this.context,
+    required this.file1,
+    required this.file2,
+  });
 
   late Workbook _workbook;
   late Worksheet _hoja;
@@ -69,17 +74,17 @@ class ExportarExcel {
 
     // Style estiloNoEncontrado = workbook.styles.addStyle(style)
 
-    _hoja.getRangeByName('B4').setText('Fecha');
-    _hoja.getRangeByName('C4').setText('Identificador');
-    _hoja.getRangeByName('D4').setText('Código de producto');
-    _hoja.getRangeByName('E4').setText('Cantidad Modelo 1');
-    _hoja.getRangeByName('F4').setText('Cantidad Modelo 2');
-    _hoja.getRangeByName('B4:F4').cellStyle.borders.bottom.lineStyle =
+    _hoja.getRangeByName('B6').setText('Fecha');
+    _hoja.getRangeByName('C6').setText('Identificador');
+    _hoja.getRangeByName('D6').setText('Código de producto');
+    _hoja.getRangeByName('E6').setText('Cantidad Modelo 1');
+    _hoja.getRangeByName('F6').setText('Cantidad Modelo 2');
+    _hoja.getRangeByName('B6:F6').cellStyle.borders.bottom.lineStyle =
         LineStyle.thick;
-    _hoja.getRangeByName('B4:F4').cellStyle.fontSize = 12;
-    _hoja.getRangeByName('B4:F4').cellStyle.bold = true;
+    _hoja.getRangeByName('B6:F6').cellStyle.fontSize = 12;
+    _hoja.getRangeByName('B6:F6').cellStyle.bold = true;
 
-    int index = 5;
+    int index = 7;
     for (EntradaDatos entrada in listaTotal) {
       var color = '#FFFFFF';
       if (entrada.encontrado == Filtro.correcto) {
@@ -111,29 +116,42 @@ class ExportarExcel {
     }
     Range rangoDatos = _hoja.getRangeByName('B4:F$index');
     rangoDatos.cellStyle.borders.all.lineStyle = LineStyle.thin;
-    _hoja.getRangeByName('B4:B$index').cellStyle.borders.left.lineStyle =
+    _hoja.getRangeByName('B5:B$index').cellStyle.borders.left.lineStyle =
         LineStyle.thick;
-    _hoja.getRangeByName('F4:F$index').cellStyle.borders.right.lineStyle =
+    _hoja.getRangeByName('F5:F$index').cellStyle.borders.right.lineStyle =
         LineStyle.thick;
     _hoja.getRangeByName('B$index:F$index').cellStyle.borders.right.lineStyle =
         LineStyle.thick;
-    _hoja.getRangeByName('B4:F4').cellStyle.borders.all.lineStyle =
+    _hoja.getRangeByName('B6:F6').cellStyle.borders.all.lineStyle =
         LineStyle.thick;
   }
 
   void _crearExcelMulti() {
     List<EntradaExcel> listaEntradas = _obtenerEntradasExcel();
     Map<String, String> mapaCodigos = _obtenerMapaCodigos(listaEntradas);
+    List<String> listaColumnasTabla = mapaCodigos.values.toList();
+    Range cabeceraTabla =
+        _hoja.getRangeByName('B6:${mapaCodigos.values.last}6');
+    cabeceraTabla.cellStyle.borders.all.lineStyle = LineStyle.thick;
+    cabeceraTabla.cellStyle.backColor = '#0000FF';
+    cabeceraTabla.cellStyle.fontSize = 12;
+    cabeceraTabla.cellStyle.bold = true;
+    for (int j = 1; j < listaColumnasTabla.length; j = j + 2) {
+      _hoja.getRangeByName('${listaColumnasTabla[j]}6').cellStyle.backColor =
+          '#FFA500';
+    }
 
-    _hoja.getRangeByName('B4').setText('Fecha');
-    _hoja.getRangeByName('C4').setText('Localidad');
-    _hoja.getRangeByName('D4').setText('Id 1');
-    _hoja.getRangeByName('E4').setText('Id 2');
+    cabeceraTabla.cellStyle.fontColor = '#FFFFFF';
+
+    _hoja.getRangeByName('B6').setText('Fecha');
+    _hoja.getRangeByName('C6').setText('Localidad');
+    _hoja.getRangeByName('D6').setText('Id 1');
+    _hoja.getRangeByName('E6').setText('Id 2');
 
     mapaCodigos.forEach((key, value) {
-      _hoja.getRangeByName('${value}4').setText(key);
+      _hoja.getRangeByName('${value}6').setText(key);
     });
-    int index = 5;
+    int index = 7;
     for (EntradaExcel entrada in listaEntradas) {
       _hoja.getRangeByName('B$index').setText(entrada.fecha);
       _hoja.getRangeByName('C$index').setText(entrada.ciudad);
@@ -164,6 +182,28 @@ class ExportarExcel {
       }
       index++;
     }
+    _hoja.getRangeByName('B6:B$index').cellStyle.borders.left.lineStyle =
+        LineStyle.thick;
+    _hoja
+        .getRangeByName(
+            '${mapaCodigos.values.last}6:${mapaCodigos.values.last}$index')
+        .cellStyle
+        .borders
+        .right
+        .lineStyle = LineStyle.thick;
+    _hoja
+        .getRangeByName('B$index:${mapaCodigos.values.last}$index')
+        .cellStyle
+        .borders
+        .bottom
+        .lineStyle = LineStyle.thick;
+    _hoja
+        .getRangeByName(
+            'B7:${listaColumnasTabla[listaColumnasTabla.length - 2]}$index')
+        .cellStyle
+        .borders
+        .right
+        .lineStyle = LineStyle.thin;
     for (int i = 1; i < 5 + mapaCodigos.length; i++) {
       _hoja.autoFitColumn(i);
     }
@@ -264,5 +304,9 @@ class ExportarExcel {
     _hoja.getRangeByName('B2').setText('Filtro: ${filtro.name}');
     _hoja.getRangeByName('A2:B2').cellStyle.bold = true;
     _hoja.getRangeByName('B2').cellStyle.hAlign = HAlignType.center;
+    _hoja.getRangeByName('A3:G3').merge();
+    _hoja.getRangeByName('A3').setText('Archivo 1: $file1');
+    _hoja.getRangeByName('A4:G4').merge();
+    _hoja.getRangeByName('A4').setText('Archivo 2: $file2');
   }
 }

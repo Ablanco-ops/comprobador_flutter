@@ -27,6 +27,8 @@ class ModeloDatos {
     required this.sheet,
     required this.fecha,
     required this.comprobante,
+    this.dictCiudades,
+    this.productos
   });
 
   @override

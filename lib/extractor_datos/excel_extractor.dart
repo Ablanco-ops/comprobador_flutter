@@ -178,8 +178,9 @@ class ExcelExtractor implements Extractor {
                 }
 
                 var entrada = listaEntradas.firstWhereOrNull((element) =>
-                    element.fecha == fecha &&
-                    element.ciudad == ciudad &&
+                    (element.identificador == id ||
+                    (element.fecha == fecha &&
+                    element.ciudad == ciudad)) &&
                     element.codProducto == modelo.productos![columna]);
                 print(entrada);
                 if (entrada != null) {
@@ -194,7 +195,7 @@ class ExcelExtractor implements Extractor {
                       codProducto: modelo.productos![columna],
                       cantidad: toPrecision(2, cantidad),
                       modelo: modelo.nombre,
-                      fecha: fecha));
+                      fecha: fecha.replaceAll('/', '.')));
                 }
               }
             }

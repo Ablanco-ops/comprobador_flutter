@@ -29,7 +29,7 @@ void customSnack(String texto, BuildContext context) {
 }
 
 String getRoot() {
-  final path = Platform.resolvedExecutable.replaceAll('comprobador.exe', '');
+  final path = Platform.resolvedExecutable.replaceAll('comprobador_flutter.exe', '');
   return path;
 }
 

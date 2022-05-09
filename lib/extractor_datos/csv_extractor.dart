@@ -51,46 +51,67 @@ class CsvExtractor implements Extractor {
   @override
   List<EntradaDatos> leerArchivo(BuildContext context) {
     List<EntradaDatos> listaEntradas = [];
-    ModeloDatos modelo = AlmacenDatos.listaModelos.firstWhere(
+
+    ModeloDatos? modelo = AlmacenDatos.listaModelos.firstWhereOrNull(
         (element) => element.nombre == _archivoDatos.listaModelos[0]);
-    int index = 0;
-    for (List<dynamic> entrada in entradasRaw) {
-      if (index >= modelo.primeraFila) {
-        EntradaDatos? entradaExistente = listaEntradas.firstWhereOrNull(
-            (element) =>
-                element.ciudad == getCiudad(modelo, entrada) &&
-                element.fecha == entrada[int.parse(modelo.fecha) - 1] &&
-                element.codProducto ==
-                    entrada[int.parse(modelo.codProductoColumna!) - 1]
-                        .toString());
-        if (entradaExistente == null) {
-          listaEntradas.add(EntradaDatos(
-              identificador:
-                  entrada[int.parse(modelo.idColumna) - 1].toString(),
-              ciudad: modelo.ciudad == null ? null : getCiudad(modelo, entrada),
-              codProducto: modelo.codProducto == null
-                  ? null
-                  : entrada[int.parse(modelo.codProductoColumna!) - 1]
-                      .toString(),
-              cantidad:
-                  entrada[int.parse(modelo.cantidadColumna) - 1].toDouble(),
-              modelo: modelo.nombre,
-              fecha: entrada[int.parse(modelo.fecha) - 1]));
-        } else {
-          entradaExistente.cantidad +=
-              entrada[int.parse(modelo.cantidadColumna) - 1].toDouble();
+    if (modelo == null) {
+      mostrarExcepcion(TipoExcepcion.archivoIncorrecto, file.path, context);
+    } else {
+      int index = 0;
+      for (List<dynamic> entrada in entradasRaw) {
+        if (index >= modelo.primeraFila) {
+          EntradaDatos? entradaExistente = listaEntradas.firstWhereOrNull(
+              (element) =>
+                  (element.identificador ==
+                          (entrada[int.parse(modelo.idColumna) - 1]
+                              .toString()
+                              .replaceAll('Alb: ', '')) ||
+                      (element.ciudad == getCiudad(modelo, entrada, context) &&
+                          element.fecha ==
+                              entrada[int.parse(modelo.fecha) - 1])) &&
+                  element.codProducto ==
+                      entrada[int.parse(modelo.codProductoColumna!) - 1]
+                          .toString());
+          if (entradaExistente == null) {
+
+            listaEntradas.add(EntradaDatos(
+                identificador:
+                    entrada[int.parse(modelo.idColumna) - 1].toString().replaceAll('Alb: ', ''),
+                ciudad: modelo.ciudad == null
+                    ? null
+                    : getCiudad(modelo, entrada, context),
+                codProducto: modelo.codProductoColumna == null
+                    ? null
+                    : entrada[int.parse(modelo.codProductoColumna!) - 1]
+                        .toString().split(' - ')[0],
+                cantidad:
+                    entrada[int.parse(modelo.cantidadColumna) - 1].toDouble(),
+                modelo: modelo.nombre,
+                fecha: entrada[int.parse(modelo.fecha) - 1].replaceAll('/','.')));
+          } else {
+            entradaExistente.cantidad +=
+                entrada[int.parse(modelo.cantidadColumna) - 1].toDouble();
+          }
         }
+        index++;
       }
-      index++;
     }
+
     return listaEntradas;
   }
 
-  String getCiudad(ModeloDatos modelo, List<dynamic> entrada) {
+  String? getCiudad(
+      ModeloDatos modelo, List<dynamic> entrada, BuildContext context) {
+    if (modelo.ciudad == null) {
+      return null;
+    }
     try {
       return modelo.dictCiudades![entrada[int.parse(modelo.ciudad!) - 1]]!;
     } catch (e) {
-      if (!entrada[int.parse(modelo.ciudad!) - 1].contains('DEVO')) {}
+      // if (!entrada[int.parse(modelo.ciudad!) - 1].contains('DEVO')) {
+      //   mostrarExcepcion(TipoExcepcion.errorDiccionario,
+      //       entrada[int.parse(modelo.ciudad!) - 1], context);
+      // }
       return entrada[int.parse(modelo.ciudad!) - 1];
     }
   }
