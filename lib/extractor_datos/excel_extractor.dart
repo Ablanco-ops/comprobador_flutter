@@ -176,14 +176,17 @@ class ExcelExtractor implements Extractor {
                   mostrarExcepcion(TipoExcepcion.errorNumerico,
                       '${modelo.cantidadColumna}:$i', context);
                 }
+                EntradaDatos? entrada;
+                entrada = listaEntradas
+                    .firstWhereOrNull((element) => element.identificador == id && element.codProducto == modelo.productos![columna]);
+                if (entrada == null) {
+                  entrada = listaEntradas.firstWhereOrNull((element) =>
+                      (element.fecha == fecha && element.ciudad == ciudad) &&
+                      element.codProducto == modelo.productos![columna]);
+                  print(entrada);
+                }
 
-                var entrada = listaEntradas.firstWhereOrNull((element) =>
-                    (element.identificador == id ||
-                    (element.fecha == fecha &&
-                    element.ciudad == ciudad)) &&
-                    element.codProducto == modelo.productos![columna]);
-                print(entrada);
-                if (entrada != null) {
+                if (entrada != null && ciudad!=null) {
                   print(entrada.cantidad);
                   entrada.cantidad =
                       toPrecision(2, entrada.cantidad + cantidad);
