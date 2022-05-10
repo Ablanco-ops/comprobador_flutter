@@ -9,6 +9,7 @@ import 'package:comprobador_flutter/modelo/modelo_datos.dart';
 import 'package:csv/csv.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:collection/collection.dart';
+import 'package:flutter/foundation.dart';
 import '../modelo/archivo_datos.dart';
 
 class CsvExtractor implements Extractor {
@@ -33,7 +34,9 @@ class CsvExtractor implements Extractor {
       final raw = const Utf8Decoder(allowMalformed: true)
           .convert(file.readAsBytesSync())
           .replaceAll('�', '');
-      print(raw);
+      if (kDebugMode) {
+        print(raw);
+      }
       entradasRaw =
           const CsvToListConverter().convert(raw, fieldDelimiter: ';');
       for (ArchivoDatos archivo in AlmacenDatos.listaArchivos) {

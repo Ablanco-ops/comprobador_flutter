@@ -156,7 +156,9 @@ class ExcelExtractor implements Extractor {
           }
         } else {
           if (RegExp(r'[0-3][0-9]\.[0-1][0-9]\.[0-9]{4}').hasMatch(cellId)) {
-            print(cellId);
+            if (kDebugMode) {
+              print(cellId);
+            }
             fecha = cellId;
           } else if (cellId.contains('DIA')) {
             ciudad = cellId;
@@ -179,18 +181,13 @@ class ExcelExtractor implements Extractor {
                 EntradaDatos? entrada;
                 entrada = listaEntradas
                     .firstWhereOrNull((element) => element.identificador == id && element.codProducto == modelo.productos![columna]);
-                if (entrada == null) {
-                  entrada = listaEntradas.firstWhereOrNull((element) =>
+                entrada ??= listaEntradas.firstWhereOrNull((element) =>
                       (element.fecha == fecha && element.ciudad == ciudad) &&
                       element.codProducto == modelo.productos![columna]);
-                  print(entrada);
-                }
 
                 if (entrada != null && ciudad!=null) {
-                  print(entrada.cantidad);
                   entrada.cantidad =
                       toPrecision(2, entrada.cantidad + cantidad);
-                  print(entrada.cantidad);
                 } else {
                   listaEntradas.add(EntradaDatos(
                       identificador: id,

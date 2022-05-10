@@ -265,7 +265,6 @@ class ExportarExcel {
         entradaExcel.cantidad2!.add(cantidad);
       }
     }
-    print(listaEntradas.length);
     return listaEntradas;
   }
 
