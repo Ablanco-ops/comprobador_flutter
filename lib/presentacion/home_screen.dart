@@ -1,4 +1,5 @@
 import 'package:comprobador_flutter/common.dart';
+import 'package:comprobador_flutter/datos/preferences.dart';
 import 'package:comprobador_flutter/presentacion/configuracion_archivos_screen.dart';
 import 'package:comprobador_flutter/presentacion/configuracion_modelos_screen.dart';
 import 'package:comprobador_flutter/providers/datos_provider.dart';
@@ -19,6 +20,7 @@ class HomeScreen extends StatelessWidget {
     final datos = Provider.of<DatosProvider>(context);
     if (!datos.iniciado) {
       AlmacenDatos.refrescarListas(context);
+      ConfigPreferences.getPathExcel().then((value) => datos.pathExcelExport = value);
       datos.iniciado = true;
     }
     String textoBusqueda = '';

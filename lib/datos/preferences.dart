@@ -1,6 +1,6 @@
 import 'package:shared_preferences/shared_preferences.dart';
 
-class Preferences {
+class ConfigPreferences {
   static Future<void> setPathExcel(String value) async {
     SharedPreferences prefs = await SharedPreferences.getInstance();
     prefs.setString('pathExcel', value);

@@ -142,7 +142,7 @@ class DatosProvider extends ChangeNotifier {
   Future<void> seleccionarPathExcel() async {
     String? result = await FilePicker.platform.getDirectoryPath();
     if (result != null) {
-      Preferences.setPathExcel(result);
+      ConfigPreferences.setPathExcel(result);
       pathExcelExport = result;
     }
     notifyListeners();
@@ -185,7 +185,7 @@ class DatosProvider extends ChangeNotifier {
       var match = _listaEntradas2.firstWhereOrNull((element) =>
           (element.identificador == entrada.identificador &&
               element.codProducto == entrada.codProducto));
-      
+
       match ??= _listaEntradas2.firstWhereOrNull((element) =>
           (element.ciudad == entrada.ciudad &&
               element.codProducto == entrada.codProducto &&
@@ -217,7 +217,7 @@ class DatosProvider extends ChangeNotifier {
   }
 
   void exportar(BuildContext context) {
-    Preferences.getPathExcel().then((value) => pathExcelExport = value);
+    ConfigPreferences.getPathExcel().then((value) => pathExcelExport = value);
 
     if (pathExcelExport == '') {
       customSnack(
